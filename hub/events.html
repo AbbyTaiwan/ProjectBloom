@@ -1332,12 +1332,7 @@
         function getBookings() { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
         function saveBookings(b) { localStorage.setItem(STORAGE_KEY, JSON.stringify(b)); }
         if (getBookings().length === 0) {
-            saveBookings([
-                { room: 1, date: todayStr, start: 9, end: 12, purpose: '督導會議', actor: 'SW-A' },
-                { room: 1, date: todayStr, start: 14, end: 16, purpose: '個案研討', actor: 'Coach-A' },
-                { room: 3, date: todayStr, start: 14, end: 16, purpose: '個案研討 #1024', actor: 'SW-B' },
-                { room: 5, date: todayStr, start: 9, end: 12, purpose: '社區活動', actor: 'Admin' },
-            ]);
+            saveBookings([]);
         }
 
         // ===== AUDIT =====
@@ -1350,16 +1345,7 @@
             saveAuditLogs(logs);
         }
         if (getAuditLogs().length === 0) {
-            saveAuditLogs([
-                { timestamp: '2026-02-28T10:42:00', actor: 'SW-A', action: '更新個案', description: '更新 Case #1024 至 Stage 5' },
-                { timestamp: '2026-02-28T10:00:00', actor: 'SW-A', action: '新增場地', description: '預約 教室 1 09:00-12:00' },
-                { timestamp: '2026-02-28T09:15:00', actor: 'Coach-A', action: '新增場地', description: '預約 教室 1 14:00-16:00' },
-                { timestamp: '2026-02-27T16:30:00', actor: 'Admin', action: '封存個案', description: '封存 Case #998' },
-                { timestamp: '2026-02-27T14:30:00', actor: 'Coach-A', action: '修改事項', description: '更改 [家長座談] 地點至教室 2' },
-                { timestamp: '2026-02-27T11:00:00', actor: 'SW-B', action: '新增場地', description: '預約 教室 3 14:00-16:00' },
-                { timestamp: '2026-02-26T15:00:00', actor: 'Admin', action: '修改事項', description: '新增 [結案典禮] 事項' },
-                { timestamp: '2026-02-26T10:00:00', actor: 'SW-A', action: '更新個案', description: '更新 Case #1035 益蟲標記' },
-            ]);
+            saveAuditLogs([]);
         }
 
         // ===== TAB SWITCHING =====
