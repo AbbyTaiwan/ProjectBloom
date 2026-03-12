@@ -1312,14 +1312,7 @@
         function saveEvents(e) { localStorage.setItem(EVK, JSON.stringify(e)); }
 
         if (getEvents().length === 0) {
-            saveEvents([
-                { id: 1, title: 'Meeting with Supervisors / 督導會議', date: todayStr, time: '10:00', location: '教室 1 / Classroom 1', desc: '月度團隊督導會議。/ Monthly supervision.', color: 'amber', icon: 'groups' },
-                { id: 2, title: 'Case Review #1024 / 個案研討', date: todayStr, time: '14:00', location: '教室 3 / Classroom 3', desc: '討論 Case #1024 進展。/ Discuss Case #1024.', color: 'blue', icon: 'assignment' },
-                { id: 3, title: 'Community Event / 社區活動', date: getDateStr(1), time: '09:00', location: '教室 5 / Classroom 5', desc: '社區親子互動。/ Family interaction.', color: 'pink', icon: 'celebration' },
-                { id: 4, title: '結案典禮 / Graduation Ceremony', date: '2026-03-15', time: '15:00', location: '教室 5 / Classroom 5', desc: '本季結案慶祝。/ Quarterly graduation.', color: 'green', icon: 'park' },
-                { id: 5, title: '家長座談 / Parent Forum', date: '2026-03-05', time: '14:00', location: '教室 2 / Classroom 2', desc: '半年度家長座談。/ Semi-annual forum.', color: 'blue', icon: 'school' },
-                { id: 6, title: '教練培訓 / Coach Training', date: '2026-03-10', time: '10:00', location: '教室 4 / Classroom 4', desc: '雙語教練培訓。/ Bilingual coaching.', color: 'amber', icon: 'psychology' },
-            ]);
+            saveEvents([]);
         }
 
         function getDateStr(offset) {
