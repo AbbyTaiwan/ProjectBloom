@@ -1363,8 +1363,24 @@
                 const isPast = ev.date < todayStr;
                 const badge = isToday ? '<span class="event-badge today">Today / 今日</span>' :
                     isPast ? '' : '<span class="event-badge upcoming">Upcoming / 即將</span>';
+
+                // Determine if color is a preset class or a custom hex/rgb value
+                const presets = ['pink', 'green', 'blue', 'amber'];
+                const isPreset = presets.includes(ev.color);
+
+                let iconClass = 'event-item-icon';
+                let iconStyle = '';
+                let iconTextStyle = '';
+
+                if (isPreset) {
+                    iconClass += ` ${ev.color}`;
+                } else {
+                    iconStyle = `background: ${ev.color}15;`; // Add 15 for ~8% opacity background
+                    iconTextStyle = `color: ${ev.color};`;
+                }
+
                 return `<div class="event-item-card">
-                <div class="event-item-icon ${ev.color}"><span class="material-icons-outlined">${ev.icon || iconMap[ev.color] || 'event'}</span></div>
+                <div class="${iconClass}" style="${iconStyle}"><span class="material-icons-outlined" style="${iconTextStyle}">${ev.icon || iconMap[ev.color] || 'event'}</span></div>
                 <div style="flex:1;min-width:0">
                     <div class="event-item-title">${ev.title}</div>
                     <div class="event-item-meta"><span class="material-icons-outlined">schedule</span>${ev.time} — ${ev.location}</div>
