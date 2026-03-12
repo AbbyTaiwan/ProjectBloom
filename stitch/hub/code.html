@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>生命種子計畫 / Seed of Life — L1</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+    <!-- Tailwind CSS (Needed for Upload Modal) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --bg: #F4F6F4;
+            --card: #FFFFFF;
+            --primary: #4A8C5C;
+            --primary-dark: #3A7A4C;
+            --primary-light: #E8F5E9;
+            --pink-bg: #FFF0F5;
+            --pink-text: #C2185B;
+            --green-bg: #F0FFF0;
+            --green-text: #2E7D32;
+            --blue-bg: #F0F8FF;
+            --blue-text: #0277BD;
+            --amber-bg: #FFFDE7;
+            --amber-text: #F57F17;
+            --red-bg: #FFF5F5;
+            --red-text: #C62828;
+            --text-main: #1A2E1A;
+            --text-sub: #5A7A5A;
+            --text-muted: #8FA88F;
+            --border: #E0E8E0;
+            --border-light: #EEF2EE;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            --shadow-hover: 0 8px 28px rgba(0, 0, 0, 0.08);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --font: 'Inter', 'Noto Sans TC', -apple-system, sans-serif;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-light)
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 32px
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .header-logo {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), #66BB6A);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none
+        }
+
+        .header-logo .material-icons-outlined {
+            font-size: 22px;
+            color: white
+        }
+
+        .header-title {
+            font-size: 16px;
+            font-weight: 700
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .header-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: white;
+            font-family: var(--font);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none
+        }
+
+        .header-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary)
+        }
+
+        .header-btn .material-icons-outlined {
+            font-size: 16px
+        }
+
+        .header-btn.logout:hover {
+            background: var(--red-bg);
+            color: var(--red-text);
+            border-color: #FFCDD2
+        }
+
+        /* Nav Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 0;
+            padding: 0 32px;
+            border-top: 1px solid var(--border-light)
+        }
+
+        .nav-tab {
+            padding: 12px 28px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: var(--font);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 3px solid transparent;
+            position: relative
+        }
+
+        .nav-tab:hover {
+            color: var(--primary);
+            background: var(--primary-light)
+        }
+
+        .nav-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: var(--primary-light)
+        }
+
+        .nav-tab .material-icons-outlined {
+            font-size: 20px
+        }
+
+        /* ===== CONTENT ===== */
+        .content {
+            padding: 24px 32px 40px;
+            max-width: 1400px;
+            margin: 0 auto
+        }
+
+        .tab-panel {
+            display: none
+        }
+
+        .tab-panel.active {
+            display: block
+        }
+
+        /* Section titles */
+        .sec-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .sec-title .material-icons-outlined {
+            font-size: 20px;
+            color: var(--primary)
+        }
+
+        .sec-goto {
+            margin-left: auto;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.2s
+        }
+
+        .sec-goto:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary)
+        }
+
+        /* ===== MANAGEMENT TAB ===== */
+        /* Events split */
+        .mgmt-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px
+        }
+
+        @media(max-width:1024px) {
+            .mgmt-split {
+                grid-template-columns: 1fr
+            }
+        }
+
+        /* Event list */
+        .ev-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .ev-card {
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            transition: all 0.2s;
+            cursor: pointer
+        }
+
+        .ev-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-1px)
+        }
+
+        .ev-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-top: 5px;
+            flex-shrink: 0
+        }
+
+        .ev-name {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 2px
+        }
+
+        .ev-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 3px
+        }
+
+        .ev-meta .material-icons-outlined {
+            font-size: 13px
+        }
+
+        .ev-desc {
+            font-size: 11px;
+            color: var(--text-sub);
+            margin-top: 2px
+        }
+
+        .ev-badge {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 99px;
+            margin-top: 4px
+        }
+
+        .ev-badge.today {
+            background: var(--green-bg);
+            color: var(--green-text)
+        }
+
+        .ev-badge.upcoming {
+            background: var(--blue-bg);
+            color: var(--blue-text)
+        }
+
+        .ev-add {
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-sm);
+            background: transparent;
+            font-family: var(--font);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 8px
+        }
+
+        .ev-add:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light)
+        }
+
+        /* Calendar */
+        .cal-box {
+            background: white;
+            border-radius: var(--radius);
+            padding: 18px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow);
+            margin-bottom: 14px
+        }
+
+        .cal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px
+        }
+
+        .cal-ttl {
+            font-size: 14px;
+            font-weight: 700
+        }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            text-align: center
+        }
+
+        .cal-dow {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--text-muted);
+            padding: 3px 0
+        }
+
+        .cal-day {
+            font-size: 11px;
+            padding: 5px 2px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+            font-weight: 500
+        }
+
+        .cal-day:hover {
+            background: var(--primary-light)
+        }
+
+        .cal-day.today {
+            background: var(--primary);
+            color: white;
+            font-weight: 700;
+            border-radius: 50%
+        }
+
+        .cal-day.has-ev::after {
+            content: '';
+            position: absolute;
+            bottom: 1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--primary)
+        }
+
+        .cal-day.today.has-ev::after {
+            background: white
+        }
+
+        .cal-day.other {
+            color: var(--border)
+        }
+
+        .cal-dual {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px
+        }
+
+        @media(max-width:1200px) {
+            .cal-dual {
+                grid-template-columns: 1fr
+            }
+        }
+
+        /* Year mini */
+        .yr-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px
+        }
+
+        .yr-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px
+        }
+
+        .yr-mo {
+            text-align: center;
+            padding: 8px 4px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .yr-mo:hover {
+            background: var(--primary-light);
+            border-color: var(--primary)
+        }
+
+        .yr-mo.cur {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            font-weight: 700
+        }
+
+        .yr-dots {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+            margin-top: 2px
+        }
+
+        .yr-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--primary)
+        }
+
+        .yr-cnt {
+            font-size: 8px;
+            color: var(--text-muted);
+            margin-top: 1px
+        }
+
+        .cal-nav {
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s
+        }
+
+        .cal-nav:hover {
+            background: var(--primary-light);
+            border-color: var(--primary)
+        }
+
+        .cal-nav .material-icons-outlined {
+            font-size: 16px;
+            color: var(--text-sub)
+        }
+
+        /* Bottom panels */
+        .bottom-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px
+        }
+
+        @media(max-width:1024px) {
+            .bottom-split {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .panel {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow)
+        }
+
+        /* Venue */
+        .ven-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        .ven-card {
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-light);
+            background: var(--bg);
+            transition: all 0.2s
+        }
+
+        .ven-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow)
+        }
+
+        .ven-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px
+        }
+
+        .ven-name {
+            font-size: 12px;
+            font-weight: 600
+        }
+
+        .ven-badge {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 99px
+        }
+
+        .ven-badge.booked {
+            background: var(--red-bg);
+            color: var(--red-text)
+        }
+
+        .ven-badge.avail {
+            background: var(--green-bg);
+            color: var(--green-text)
+        }
+
+        .ven-bar {
+            height: 3px;
+            background: var(--border-light);
+            border-radius: 99px;
+            overflow: hidden;
+            margin-bottom: 3px
+        }
+
+        .ven-fill {
+            height: 100%;
+            border-radius: 99px
+        }
+
+        .ven-meta {
+            font-size: 10px;
+            color: var(--text-muted)
+        }
+
+        /* Audit */
+        .aud-card {
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-light);
+            overflow: hidden
+        }
+
+        .aud-tbl {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px
+        }
+
+        .aud-tbl thead {
+            background: var(--primary-light)
+        }
+
+        .aud-tbl th {
+            text-align: left;
+            padding: 8px 12px;
+            font-weight: 600;
+            font-size: 10px;
+            color: var(--primary-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px
+        }
+
+        .aud-tbl td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-sub)
+        }
+
+        .aud-tbl tr:last-child td {
+            border-bottom: none
+        }
+
+        .aud-tbl tr:hover td {
+            background: #FAFCFA
+        }
+
+        .aud-ts {
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+            color: var(--text-muted)
+        }
+
+        .aud-who {
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: nowrap
+        }
+
+        .aud-tag {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 99px;
+            white-space: nowrap
+        }
+
+        .aud-tag.edit {
+            background: var(--blue-bg);
+            color: var(--blue-text)
+        }
+
+        .aud-tag.book {
+            background: var(--amber-bg);
+            color: var(--amber-text)
+        }
+
+        .aud-tag.del {
+            background: var(--red-bg);
+            color: var(--red-text)
+        }
+
+        /* ===== CASE FOREST TAB — 15 Stage Journey ===== */
+        .forest-hero {
+            margin-bottom: 8px;
+        }
+
+        .forest-hero h2 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+
+        .forest-hero h3 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .forest-hero p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .forest-hero-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .forest-post-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 22px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: var(--font);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(74, 140, 92, 0.25);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .forest-post-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(74, 140, 92, 0.35);
+        }
+
+        .forest-post-btn .material-icons-outlined {
+            font-size: 18px;
+        }
+
+        /* ===== Group-Based Case Forest Layout ===== */
+        .forest-groups {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            margin-bottom: 48px;
+        }
+
+        .forest-group {
+            background: white;
+            border-radius: var(--radius);
+            padding: 32px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-light);
+        }
+
+        .forest-group-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .forest-group-badge {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .forest-group-title {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .forest-group-title h4 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0;
+        }
+
+        .forest-group-title span {
+            font-size: 13px;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        .forest-goal-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .forest-goal-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: #FAFCFA;
+            border: 1px solid var(--border-light);
+            border-radius: 14px;
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .forest-goal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .forest-goal-card:hover {
+            transform: translateY(-4px);
+            background: white;
+            box-shadow: 0 10px 30px rgba(74, 140, 92, 0.08);
+            border-color: #DDE8DD;
+        }
+
+        .forest-goal-card:hover::before {
+            opacity: 1;
+        }
+
+        .forest-goal-icon {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            flex-shrink: 0;
+        }
+
+        .forest-goal-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .forest-goal-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.3;
+        }
+
+        .forest-goal-name-zh {
+            font-size: 12px;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        /* ===== RESPONSIVE TWEAKS FOR GROUPS ===== */
+        @media(max-width:1024px) {
+            .forest-goal-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width:768px) {
+            .forest-group {
+                padding: 20px;
+            }
+
+            .forest-group-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .forest-goal-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .forest-goal-card {
+                padding: 16px;
+            }
+
+            .forest-goal-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+        }
+
+        .page-footer {
+            text-align: center;
+            padding: 32px 20px;
+            font-size: 12px;
+            color: var(--text-muted)
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media(max-width:1024px) {
+            .mgmt-split {
+                grid-template-columns: 1fr
+            }
+
+            .bottom-split {
+                grid-template-columns: 1fr
+            }
+
+            .cal-dual {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media(max-width:768px) {
+            .header-top {
+                padding: 10px 16px;
+                flex-wrap: wrap;
+                gap: 8px
+            }
+
+            .header-title {
+                font-size: 14px
+            }
+
+            .header-right {
+                gap: 4px
+            }
+
+            .header-btn {
+                padding: 6px 8px;
+                font-size: 10px
+            }
+
+            .header-btn .material-icons-outlined {
+                font-size: 14px
+            }
+
+            .nav-tabs {
+                padding: 0 12px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none
+            }
+
+            .nav-tabs::-webkit-scrollbar {
+                display: none
+            }
+
+            .nav-tab {
+                padding: 10px 16px;
+                font-size: 12px;
+                white-space: nowrap
+            }
+
+            .nav-tab .material-icons-outlined {
+                font-size: 16px
+            }
+
+            .content {
+                padding: 16px
+            }
+
+            .mgmt-split {
+                gap: 16px
+            }
+
+            .bottom-split {
+                gap: 16px
+            }
+
+            .sec-title {
+                font-size: 14px
+            }
+
+            .ev-card {
+                padding: 12px
+            }
+
+            .ev-name {
+                font-size: 12px
+            }
+
+            .ev-meta {
+                font-size: 10px
+            }
+
+            .ev-desc {
+                font-size: 10px
+            }
+
+            .cal-box {
+                padding: 12px
+            }
+
+            .cal-ttl {
+                font-size: 12px
+            }
+
+            .cal-day {
+                font-size: 10px;
+                padding: 4px 1px
+            }
+
+            .cal-dow {
+                font-size: 8px
+            }
+
+            .yr-grid {
+                grid-template-columns: repeat(3, 1fr)
+            }
+
+            .panel {
+                padding: 14px
+            }
+
+            .ven-name {
+                font-size: 11px
+            }
+
+            .aud-tbl {
+                font-size: 10px
+            }
+
+            .aud-tbl th {
+                padding: 6px 8px;
+                font-size: 9px
+            }
+
+            .aud-tbl td {
+                padding: 6px 8px
+            }
+
+            .aud-card {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch
+            }
+
+            .aud-tbl {
+                min-width: 420px
+            }
+
+            /* Case Forest tab responsive handled in main section */
+        }
+
+        @media(max-width:480px) {
+            .header-top {
+                padding: 8px 12px
+            }
+
+            .header-logo {
+                width: 30px;
+                height: 30px;
+                border-radius: 8px
+            }
+
+            .header-logo .material-icons-outlined {
+                font-size: 18px
+            }
+
+            .header-title {
+                font-size: 13px
+            }
+
+            .header-right .header-btn span:not(.material-icons-outlined) {
+                display: none
+            }
+
+            .nav-tab {
+                padding: 8px 12px;
+                font-size: 11px;
+                gap: 4px
+            }
+
+            .content {
+                padding: 12px
+            }
+
+            .ev-card {
+                flex-direction: column;
+                gap: 8px
+            }
+
+            .ev-dot {
+                width: 8px;
+                height: 8px;
+                margin-top: 0
+            }
+
+            .cal-dual {
+                gap: 8px
+            }
+
+            .yr-grid {
+                gap: 4px
+            }
+
+            .yr-mo {
+                padding: 6px 2px;
+                font-size: 10px
+            }
+
+            .ven-card {
+                padding: 8px 10px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-top">
+            <div class="header-left">
+                <a href="../index.html" class="header-logo"><span class="material-icons-outlined">eco</span></a>
+                <span class="header-title">生命種子計畫 / Seed of Life</span>
+            </div>
+            <div class="header-right">
+                <button class="header-btn logout" onclick="handleLogout()"><span
+                        class="material-icons-outlined">logout</span>登出</button>
+            </div>
+        </div>
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('mgmt')">
+                <span class="material-icons-outlined">dashboard</span>管理中樞 / Management Hub
+            </button>
+            <button class="nav-tab" onclick="switchTab('forest')">
+                <span class="material-icons-outlined">forest</span>個案森林 / Case Forest
+            </button>
+        </div>
+    </header>
+
+    <div class="content">
+        <!-- ===== TAB 1: Management Hub ===== -->
+        <div class="tab-panel active" id="panel-mgmt">
+            <!-- Events + Calendar Split -->
+            <div class="mgmt-split">
+                <!-- Left: Events -->
+                <div>
+                    <div class="sec-title">
+                        <span class="material-icons-outlined">event_note</span>重要事項看板 / Events Board
+                        <a href="events.html#events" class="sec-goto"><span class="material-icons-outlined"
+                                style="font-size:14px;">open_in_new</span></a>
+                    </div>
+                    <div class="ev-list" id="evList"></div>
+                    <button class="ev-add" onclick="location.href='events.html#events'">
+                        <span class="material-icons-outlined" style="font-size:16px;">add_circle</span>新增事項 / Add Event
+                    </button>
+                </div>
+                <!-- Right: Calendar -->
+                <div>
+                    <div class="sec-title"><span class="material-icons-outlined">calendar_month</span>行事曆 / Calendar
+                    </div>
+                    <div class="cal-dual">
+                        <div class="cal-box" id="calM1"></div>
+                        <div class="cal-box" id="calM2"></div>
+                    </div>
+                    <div class="cal-box" style="margin-top:0">
+                        <div class="yr-head">
+                            <button class="cal-nav" onclick="chgYr(-1)"><span
+                                    class="material-icons-outlined">chevron_left</span></button>
+                            <span class="cal-ttl" id="yrLbl"></span>
+                            <button class="cal-nav" onclick="chgYr(1)"><span
+                                    class="material-icons-outlined">chevron_right</span></button>
+                        </div>
+                        <div class="yr-grid" id="yrGrid"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Venue + Audit -->
+            <div class="bottom-split">
+                <div class="panel">
+                    <div class="sec-title">
+                        <span class="material-icons-outlined">meeting_room</span>場地預約 / Venue Booking
+                        <a href="events.html#venue" class="sec-goto"><span class="material-icons-outlined"
+                                style="font-size:14px;">open_in_new</span></a>
+                    </div>
+                    <div class="ven-list">
+                        <div class="ven-card">
+                            <div class="ven-head"><span class="ven-name">教室 1 / Classroom 1</span><span
+                                    class="ven-badge booked">Booked</span></div>
+                            <div class="ven-bar">
+                                <div class="ven-fill"
+                                    style="width:70%;background:linear-gradient(90deg,#EF5350,#FF8A65);"></div>
+                            </div>
+                            <div class="ven-meta">09:00 — 15:00 · 督導會議</div>
+                        </div>
+                        <div class="ven-card">
+                            <div class="ven-head"><span class="ven-name">教室 2 / Classroom 2</span><span
+                                    class="ven-badge avail">Available</span></div>
+                            <div class="ven-bar">
+                                <div class="ven-fill"
+                                    style="width:20%;background:linear-gradient(90deg,#66BB6A,#81C784);"></div>
+                            </div>
+                            <div class="ven-meta">Next: 16:00 — 家長座談</div>
+                        </div>
+                        <div class="ven-card">
+                            <div class="ven-head"><span class="ven-name">教室 3 / Classroom 3</span><span
+                                    class="ven-badge booked">Booked</span></div>
+                            <div class="ven-bar">
+                                <div class="ven-fill"
+                                    style="width:40%;background:linear-gradient(90deg,#EF5350,#FF8A65);"></div>
+                            </div>
+                            <div class="ven-meta">14:00 — 16:00 · 個案研討</div>
+                        </div>
+                        <div class="ven-card">
+                            <div class="ven-head"><span class="ven-name">教室 4 / Classroom 4</span><span
+                                    class="ven-badge avail">Available</span></div>
+                            <div class="ven-bar">
+                                <div class="ven-fill" style="width:0%;"></div>
+                            </div>
+                            <div class="ven-meta">全日可用 / All day</div>
+                        </div>
+                        <div class="ven-card">
+                            <div class="ven-head"><span class="ven-name">教室 5 / Classroom 5</span><span
+                                    class="ven-badge booked">Booked</span></div>
+                            <div class="ven-bar">
+                                <div class="ven-fill"
+                                    style="width:50%;background:linear-gradient(90deg,#EF5350,#FF8A65);"></div>
+                            </div>
+                            <div class="ven-meta">09:00 — 12:00 · 社區活動</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="sec-title">
+                        <span class="material-icons-outlined">history</span>透明化日誌 / Audit Logs
+                        <a href="events.html#audit" class="sec-goto"><span class="material-icons-outlined"
+                                style="font-size:14px;">open_in_new</span></a>
+                    </div>
+                    <div class="aud-card">
+                        <table class="aud-tbl">
+                            <thead>
+                                <tr>
+                                    <th>時間</th>
+                                    <th>操作者</th>
+                                    <th>行動</th>
+                                    <th>描述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="aud-ts">10:42</td>
+                                    <td class="aud-who">Sarah L.</td>
+                                    <td><span class="aud-tag edit">更新個案</span></td>
+                                    <td>更新 Case #1024 至 Stage 5</td>
+                                </tr>
+                                <tr>
+                                    <td class="aud-ts">10:00</td>
+                                    <td class="aud-who">Sarah L.</td>
+                                    <td><span class="aud-tag book">新增場地</span></td>
+                                    <td>預約 教室 1 09:00-12:00</td>
+                                </tr>
+                                <tr>
+                                    <td class="aud-ts">09:15</td>
+                                    <td class="aud-who">Coach-A</td>
+                                    <td><span class="aud-tag book">新增場地</span></td>
+                                    <td>預約 教室 1 14:00-16:00</td>
+                                </tr>
+                                <tr>
+                                    <td class="aud-ts">Yesterday</td>
+                                    <td class="aud-who">Admin</td>
+                                    <td><span class="aud-tag del">封存個案</span></td>
+                                    <td>封存 Case #998</td>
+                                </tr>
+                                <tr>
+                                    <td class="aud-ts">Yesterday</td>
+                                    <td class="aud-who">Coach-A</td>
+                                    <td><span class="aud-tag edit">修改事項</span></td>
+                                    <td>更改 [家長座談] 地點至教室 2</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== TAB 2: Case Forest — 15 Stages ===== -->
+        <div class="tab-panel" id="panel-forest">
+            <!-- Hero -->
+            <div class="forest-hero">
+                <div class="forest-hero-top">
+                    <div>
+                        <h2>生命旅程 15 階段</h2>
+                        <h3>15 Stages of Life Journey</h3>
+                        <p>選擇階段以查看資源與檔案 / Select a stage to view resources and files</p>
+                    </div>
+                    <button class="forest-post-btn" onclick="openUploadModal()">
+                        <span class="material-icons-outlined">add_circle</span>
+                        發布 / Post
+                    </button>
+                </div>
+                <div style="height:1px;background:var(--border-light);margin:20px 0 24px;"></div>
+            </div>
+
+            <!-- Group-Based Stage Navigation -->
+            <div class="forest-groups">
+                <!-- Group 1: Prenatal Strategy -->
+                <div class="forest-group">
+                    <div class="forest-group-header">
+                        <div class="forest-group-badge">1</div>
+                        <div class="forest-group-title">
+                            <h4>Prenatal Strategy</h4>
+                            <span>產前策略：生理安全感、心理修復與身份重塑</span>
+                        </div>
+                    </div>
+                    <div class="forest-goal-grid">
+                        <a href="../goals/g01.html" class="forest-goal-card">
+                            <div class="forest-goal-icon">🌱</div>
+                            <div class="forest-goal-info">
+                                <span class="forest-goal-name">01 Bio-Safety &amp; Emotional Stability</span>
+                                <span class="forest-goal-name-zh">生理安全感與情緒穩定</span>
+                            </div>
+                        </a>
+                        <a href="../goals/g02.html" class="forest-goal-card">
+                            <div class="forest-goal-icon">🪨</div>
+                            <div class="forest-goal-info">
+                                <span class="forest-goal-name">02 Gentle Review of Past Trauma</span>
+                                <span class="forest-goal-name-zh">溫柔回看過去傷痛</span>
+                            </div>
+                        </a>
+                        <a href="../goals/g03.html" class="forest-goal-card">
+                            <div class="forest-goal-icon">✨</div>
+                            <div class="forest-goal-info">
+                                <span class="forest-goal-name">03 Inventory of Inner Strengths</span>
+                                <span class="forest-goal-name-zh">盤點內在天賦強項</span>
+                            </div>
+                        </a>
+                        <a href="../goals/g04.html" class="forest-goal-card">
+                            <div class="forest-goal-icon">🌿</div>
+                            <div class="forest-goal-info">
+                                <span class="forest-goal-name">04 Identity Transformation: Life Creator</span>
+                                <span class="forest-goal-name-zh">身份轉換：生命創造者</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Group 2: Decision & Prep -->
+                <div class="forest-group">
+                    <div class="forest-group-header">
+                        <div class="forest-group-badge">2</div>
+                        <div class="forest-group-title">
+                            <h4>Decision &amp; Prep</h4>
+                            <span>抉擇與準備：生活紀律、母嬰心理連結與生命決策</span>
+                        </div>
+                    </div>
+                    <div class="forest-goal-grid">
+                        <a href="../goals/g05.html" class="forest-goal-card">
+                            <div class="forest-goal-icon">🪵</div>
+                            <div class="forest-goal-info">
+                                <span class="forest-goal-name">05 Discipline &amp; Skill Learning</span>
+                                <span class="forest-goal-name-zh">生活紀律與技能學習</span>
+                            </div>
+                        </a>
+                        <a href="../goals/g06.html" class="forest-goal-card">
+                            <div class="forest-goal-icon">🍃</div>
+                            <div class="forest-goal-info">
+                                <span class="forest-goal-name">06 Mother-Baby Bonding &amp; Future Planning</span>
+                                <span class="forest-goal-name-zh">母嬰心理連結與未來規劃</span>
+                            </div>
+                        </a>
+                        <a href="../goals/g07.html" class="forest-goal-card">
+                            <div class="forest-goal-icon">🍀</div>
+                            <div class="forest-goal-info">
+                                <span class="forest-goal-name">07 Building Mutual Aid Capital</span>
+                                <span class="forest-goal-name-zh">機構內互助資產建立</span>
+                            </div>
+                        </a>
+                        <a href="../goals/g08.html" class="forest-goal-card">
+                            <div class="forest-goal-icon">✂️</div>
+                            <div class="forest-goal-info">
+                                <span class="forest-goal-name">08 Final Life Path Decision</span>
+                                <span class="forest-goal-name-zh">最終生命路徑決策</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Group 3: Postnatal & Co-living -->
+                <div class="forest-group">
+                    <div class="forest-group-header">
+                        <div class="forest-group-badge">3</div>
+                        <div class="forest-group-title">
+                            <h4>Postnatal &amp; Co-living</h4>
+                            <span>產後支持與機構共養：支持系統、公開認證與同儕經驗傳承</span>
+                        </div>
+                    </div>
+                    <div class="forest-goal-grid">
+                        <a href="../goals/g09.html" class="forest-goal-card">
+                            <div class="forest-goal-icon">🤝</div>
+                            <div class="forest-goal-info">
+                                <span class="forest-goal-name">09 Establishing Formal Support System</span>
+                                <span class="forest-goal-name-zh">建立正式支持系統</span>
+                            </div>
+                        </a>
+                        <a href="../goals/g10.html" class="forest-goal-card">
+                            <div class="forest-goal-icon">🌸</div>
+                            <div class="forest-goal-info">
+                                <span class="forest-goal-name">10 Recognition &amp; Celebration of Success</span>
+                                <span class="forest-goal-name-zh">公開認證與慶祝成功</span>
+                            </div>
+                        </a>
+                        <a href="../goals/g11.html" class="forest-goal-card">
+                            <div class="forest-goal-icon">🐝</div>
+                            <div class="forest-goal-info">
+                                <span class="forest-goal-name">11 Institutional Resource Sharing</span>
+                                <span class="forest-goal-name-zh">機構共養資源共享</span>
+                            </div>
+                        </a>
+                        <a href="../goals/g12.html" class="forest-goal-card">
+                            <div class="forest-goal-icon">🍎</div>
+                            <div class="forest-goal-info">
+                                <span class="forest-goal-name">12 Mentoring &amp; Peer Support</span>
+                                <span class="forest-goal-name-zh">經驗傳承與同儕支持</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Group 4: Cafe & Independence -->
+                <div class="forest-group">
+                    <div class="forest-group-header">
+                        <div class="forest-group-badge">4</div>
+                        <div class="forest-group-title">
+                            <h4>Cafe &amp; Independence</h4>
+                            <span>咖啡廳就業與自立：職能提升、理財規劃與社區融入</span>
+                        </div>
+                    </div>
+                    <div class="forest-goal-grid">
+                        <a href="../goals/g13.html" class="forest-goal-card">
+                            <div class="forest-goal-icon">☕</div>
+                            <div class="forest-goal-info">
+                                <span class="forest-goal-name">13 Cafe Service Skill Enhancement</span>
+                                <span class="forest-goal-name-zh">咖啡廳服務職能提升</span>
+                            </div>
+                        </a>
+                        <a href="../goals/g14.html" class="forest-goal-card">
+                            <div class="forest-goal-icon">💰</div>
+                            <div class="forest-goal-info">
+                                <span class="forest-goal-name">14 Financial Planning &amp; Balance</span>
+                                <span class="forest-goal-name-zh">理財規劃與收支平衡</span>
+                            </div>
+                        </a>
+                        <a href="../goals/g15.html" class="forest-goal-card">
+                            <div class="forest-goal-icon">🌬️</div>
+                            <div class="forest-goal-info">
+                                <span class="forest-goal-name">15 Exit Preparation &amp; Community Integration</span>
+                                <span class="forest-goal-name-zh">離園準備與社區融入</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <footer class="page-footer">© 2026 生命種子計畫 Seed of Life Project. All rights reserved.</footer>
+
+    <script>
+        // ===== TAB SWITCH =====
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelector(`.nav-tab[onclick*="${tab}"]`).classList.add('active');
+            document.getElementById('panel-' + tab).classList.add('active');
+            if (tab === 'mgmt') { renderEvents(); renderCals(); renderYr(); }
+        }
+
+        // ===== EVENTS =====
+        const today = new Date(), todayStr = today.toISOString().slice(0, 10);
+        const EVK = 'sol_events';
+        function getEv() { return JSON.parse(localStorage.getItem(EVK) || '[]'); }
+        function dateOff(n) { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); }
+        if (getEv().length === 0) {
+            localStorage.setItem(EVK, JSON.stringify([
+                { id: 1, title: 'Meeting with Supervisors / 督導會議', date: todayStr, time: '10:00', location: '教室 1', desc: '月度督導會議。Monthly supervision.', color: '#FF9800', icon: 'groups' },
+                { id: 2, title: 'Case Review #1024 / 個案研討', date: todayStr, time: '14:00', location: '教室 3', desc: '討論進展。Discuss progress.', color: '#1976D2', icon: 'assignment' },
+                { id: 3, title: 'Community Event / 社區活動', date: dateOff(1), time: '09:00', location: '教室 5', desc: '社區親子互動。Family interaction.', color: '#E91E63', icon: 'celebration' },
+                { id: 4, title: '結案典禮 / Graduation Ceremony', date: '2026-03-15', time: '15:00', location: '教室 5', desc: '本季結案慶祝。Quarterly graduation.', color: '#4CAF50', icon: 'park' },
+                { id: 5, title: '家長座談 / Parent Forum', date: '2026-03-05', time: '14:00', location: '教室 2', desc: '半年度家長座談。Forum.', color: '#1976D2', icon: 'school' },
+                { id: 6, title: '教練培訓 / Coach Training', date: '2026-03-10', time: '10:00', location: '教室 4', desc: '雙語教練培訓。Bilingual coaching.', color: '#FF9800', icon: 'psychology' },
+            ]));
+        }
+
+        function renderEvents() {
+            const evs = getEv().sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+            document.getElementById('evList').innerHTML = evs.map(e => {
+                const isToday = e.date === todayStr;
+                const badge = isToday ? '<span class="ev-badge today">Today / 今日</span>' : '<span class="ev-badge upcoming">Upcoming / 即將</span>';
+                return `<div class="ev-card" onclick="location.href='events.html#events'">
+                <div class="ev-dot" style="background:${e.color}"></div>
+                <div style="flex:1"><div class="ev-name">${e.title}</div>
+                <div class="ev-meta"><span class="material-icons-outlined">schedule</span>${e.time} — ${e.location}</div>
+                <div class="ev-desc">${e.desc}</div>${badge}</div></div>`;
+            }).join('');
+        }
+
+        // ===== CALENDAR =====
+        const MZ = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
+        const ME = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const DW = ['日', '一', '二', '三', '四', '五', '六'];
+        let calYr = today.getFullYear();
+
+        function evDates() { const s = new Set(); getEv().forEach(e => s.add(e.date)); return s; }
+
+        function renderMo(cid, y, m) {
+            const eds = evDates(), fd = new Date(y, m, 1).getDay(), dim = new Date(y, m + 1, 0).getDate(), pd = new Date(y, m, 0).getDate();
+            let h = `<div class="cal-head"><span class="cal-ttl">${y} ${MZ[m]} / ${ME[m]}</span></div><div class="cal-grid">`;
+            DW.forEach(d => h += `<div class="cal-dow">${d}</div>`);
+            for (let i = fd - 1; i >= 0; i--) h += `<div class="cal-day other">${pd - i}</div>`;
+            for (let d = 1; d <= dim; d++) {
+                const ds = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                const cls = `cal-day${ds === todayStr ? ' today' : ''}${eds.has(ds) ? ' has-ev' : ''}`;
+                h += `<div class="${cls}">${d}</div>`;
+            }
+            const rem = (7 - (fd + dim) % 7) % 7;
+            for (let i = 1; i <= rem; i++) h += `<div class="cal-day other">${i}</div>`;
+            h += '</div>';
+            document.getElementById(cid).innerHTML = h;
+        }
+
+        function renderCals() {
+            const m = today.getMonth(), y = today.getFullYear();
+            renderMo('calM1', y, m);
+            renderMo('calM2', m === 11 ? y + 1 : y, m === 11 ? 0 : m + 1);
+        }
+
+        function renderYr() {
+            document.getElementById('yrLbl').textContent = `${calYr} 年曆 / Year`;
+            const eds = evDates(), cm = today.getMonth(), cy = today.getFullYear();
+            let h = '';
+            for (let m = 0; m < 12; m++) {
+                const pre = `${calYr}-${String(m + 1).padStart(2, '0')}`;
+                let cnt = 0; eds.forEach(d => { if (d.startsWith(pre)) cnt++; });
+                const cur = calYr === cy && m === cm;
+                h += `<div class="yr-mo${cur ? ' cur' : ''}"><div>${MZ[m]}</div>`;
+                if (cnt > 0) h += `<div class="yr-dots">${'<div class="yr-dot"></div>'.repeat(Math.min(cnt, 5))}</div><div class="yr-cnt">${cnt} 事項</div>`;
+                h += '</div>';
+            }
+            document.getElementById('yrGrid').innerHTML = h;
+        }
+        function chgYr(d) { calYr += d; renderYr(); }
+
+
+        // ===== INIT =====
+        function handleLogout() { localStorage.removeItem('sol_user'); window.location.href = '../index.html'; }
+        renderEvents(); renderCals(); renderYr();
+
+        // Check URL hash on page load to switch to the correct tab
+        window.addEventListener('load', function () {
+            const hash = window.location.hash.slice(1); // Remove the '#'
+            if (hash && (hash === 'mgmt' || hash === 'forest')) {
+                switchTab(hash);
+            }
+        });
+
+    </script>
+
+    <!-- ===== UPLOAD RESOURCE MODAL ===== -->
+    <div id="uploadModal"
+        class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
+        onclick="if(event.target===this) closeUploadModal()">
+        <div
+            class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
+
+            <!-- Modal Header -->
+            <div
+                class="px-6 py-4 border-b border-slate-100 flex items-center justify-between text-slate-800 bg-slate-50/50">
+                <h3 class="font-bold text-lg tracking-tight flex items-center gap-2">
+                    <span class="material-icons-outlined text-green-500">upload_file</span>
+                    發布資源 / Post Resource
+                </h3>
+                <button onclick="closeUploadModal()"
+                    class="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-1.5 rounded-lg transition-colors">
+                    <span class="material-icons-outlined text-[20px] block">close</span>
+                </button>
+            </div>
+
+            <!-- Modal Body (Form) -->
+            <div class="overflow-y-auto p-6">
+                <form id="uploadForm" class="flex flex-col gap-5">
+
+                    <div>
+                        <label for="resTitle" class="block text-sm font-semibold text-slate-700 mb-1.5">資源名稱 / Resource
+                            Title <span class="text-red-500">*</span></label>
+                        <input type="text" id="resTitle" required placeholder="例如：114年度理財工具表單"
+                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-green-500 focus:ring-2 focus:ring-green-500/20 outline-none transition-all text-sm font-medium">
+                    </div>
+
+                    <div>
+                        <label for="resStage" class="block text-sm font-semibold text-slate-700 mb-1.5">發布階段 / Target
+                            Stage <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <select id="resStage" required
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-green-500 focus:ring-2 focus:ring-green-500/20 outline-none transition-all text-sm font-medium appearance-none">
+                                <option value="" disabled selected>請選擇一個階段層次 / Select stage...</option>
+                                <optgroup label="1. 產前策略 Prenatal">
+                                    <option value="Goal 01">Goal 01: 生理安全感與情緒穩定</option>
+                                    <option value="Goal 02">Goal 02: 溫柔回看過去傷痛</option>
+                                    <option value="Goal 03">Goal 03: 盤點內在天賦強項</option>
+                                    <option value="Goal 04">Goal 04: 身份轉換：生命創造者</option>
+                                </optgroup>
+                                <optgroup label="2. 抉擇與準備 Decision & Prep">
+                                    <option value="Goal 05">Goal 05: 生活紀律與技能學習</option>
+                                    <option value="Goal 06">Goal 06: 母嬰心理連結與未來規劃</option>
+                                    <option value="Goal 07">Goal 07: 機構內互助資產建立</option>
+                                    <option value="Goal 08">Goal 08: 最終生命路徑決策</option>
+                                </optgroup>
+                                <optgroup label="3. 產後支持 Postnatal">
+                                    <option value="Goal 09">Goal 09: 建立正式支持系統</option>
+                                    <option value="Goal 10">Goal 10: 公開認證與慶祝成功</option>
+                                    <option value="Goal 11">Goal 11: 機構共養資源共享</option>
+                                    <option value="Goal 12">Goal 12: 經驗傳承與同儕支持</option>
+                                </optgroup>
+                                <optgroup label="4. 咖啡廳就業 Cafe & Independence">
+                                    <option value="Goal 13">Goal 13: 咖啡廳服務職能提升</option>
+                                    <option value="Goal 14">Goal 14: 理財規劃與收支平衡</option>
+                                    <option value="Goal 15">Goal 15: 離園準備與社區融入</option>
+                                </optgroup>
+                            </select>
+                            <span
+                                class="material-icons-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="resFile" class="block text-sm font-semibold text-slate-700 mb-1.5">上傳附件 / Upload
+                            File</label>
+                        <div class="relative w-full">
+                            <input type="file" id="resFile"
+                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                onchange="document.getElementById('fileNameLabel').textContent = this.files[0] ? this.files[0].name : '點擊或拖曳檔案至此 / Click or drag file here'">
+                            <div
+                                class="w-full flex flex-col items-center justify-center px-4 py-6 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 text-slate-500 transition-colors group">
+                                <span
+                                    class="material-icons-outlined text-3xl mb-2 text-slate-400 group-hover:text-green-500 transition-colors">cloud_upload</span>
+                                <span id="fileNameLabel" class="text-sm font-medium text-center">點擊或拖曳檔案至此 / Click or
+                                    drag file here</span>
+                                <span class="text-xs text-slate-400 mt-1">支援 PDF, DOCX, XLSX, JPG (Max: 50MB)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="resDesc" class="block text-sm font-semibold text-slate-700 mb-1.5">補充說明 /
+                            Description</label>
+                        <textarea id="resDesc" rows="3" placeholder="請簡單描述這份資源的用途..."
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-green-500 focus:ring-2 focus:ring-green-500/20 outline-none transition-all text-sm font-medium resize-none"></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-3 mt-auto">
+                <button type="button" onclick="closeUploadModal()"
+                    class="px-4 py-2 rounded-lg font-semibold text-slate-600 hover:bg-slate-200 transition-colors text-sm">
+                    取消 / Cancel
+                </button>
+                <button type="submit" form="uploadForm" id="uploadSubmitBtn"
+                    class="flex items-center gap-1.5 px-6 py-2 rounded-lg font-bold text-white bg-green-500 hover:bg-green-600 transition-colors text-sm shadow-md shadow-green-500/20">
+                    <span class="material-icons-outlined text-[18px]">publish</span>
+                    確認發布 / Submit
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Upload Logic Script placed at the bottom so elements exist -->
+    <script>
+        function getUploadModal() { return document.getElementById('uploadModal'); }
+
+        function openUploadModal() {
+            const m = getUploadModal();
+            if (!m) return;
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+            // Reset form
+            document.getElementById('uploadForm').reset();
+            document.getElementById('fileNameLabel').textContent = '點擊或拖曳檔案至此 / Click or drag file here';
+        }
+
+        function closeUploadModal() {
+            const m = getUploadModal();
+            if (!m) return;
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        }
+
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            const m = getUploadModal();
+            if (e.key === 'Escape' && m && !m.classList.contains('hidden')) {
+                closeUploadModal();
+            }
+        });
+
+        // Form submission
+        document.getElementById('uploadForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const btn = document.getElementById('uploadSubmitBtn');
+            const origText = btn.innerHTML;
+            btn.innerHTML = '<span class="material-icons-outlined" style="animation:spin 1s linear infinite">refresh</span> 處理中...';
+            btn.disabled = true;
+
+            // Gather data
+            const title = document.getElementById('resTitle').value;
+            const stage = document.getElementById('resStage').value;
+            const desc = document.getElementById('resDesc').value;
+            // Get file name if available, else generic name
+            const fileInput = document.getElementById('resFile');
+            const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : '附件.pdf';
+
+            // Create resource object
+            const newRes = {
+                id: 'res_' + Date.now().toString(36),
+                title: title,
+                stage: stage,
+                desc: desc || '尚無描述 / No description',
+                fileName: fileName,
+                uploadedBy: 'Coach / Social Worker', // Currently hardcoded
+                date: new Date().toISOString().slice(0, 10),
+                type: fileName.split('.').pop().toLowerCase()
+            };
+
+            // Save to localStorage
+            let resources = JSON.parse(localStorage.getItem('sol_resources') || '[]');
+            resources.push(newRes);
+            localStorage.setItem('sol_resources', JSON.stringify(resources));
+
+            // Simulate network delay
+            setTimeout(() => {
+                btn.innerHTML = origText;
+                btn.disabled = false;
+                closeUploadModal();
+
+                // Show success toast
+                setTimeout(() => {
+                    alert(`成功發布至: ${stage}！\nSuccessfully posted!`);
+                }, 100);
+
+            }, 800);
+        });
+    </script>
+    <style>
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</body>
+
+</html>

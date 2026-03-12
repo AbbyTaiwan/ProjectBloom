@@ -1,0 +1,633 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Goal 01: Bio-Safety & Emotional Stability ??Strategy Map</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet">
+    <!-- D3.js for interactive mind map -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#507D55",
+                        "primary-50": "#f0fdf4",
+                        "primary-100": "#dcfce7",
+                        "primary-200": "#bbf7d0",
+                        "primary-300": "#86efac",
+                        "primary-400": "#4ade80",
+                        "primary-500": "#507D55",
+                        "primary-600": "#406644",
+                        "primary-700": "#345237",
+                        "primary-800": "#2d4430",
+                        "primary-900": "#263929",
+                        "background-light": "#f6f6f8",
+                        "surface-light": "#ffffff",
+                        "text-main": "#111318",
+                        "text-secondary": "#616f89",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "Noto Sans TC", "sans-serif"],
+                        sans: ["Inter", "Noto Sans TC", "sans-serif"],
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            overflow: hidden;
+            /* Prevent body scroll, handle internally */
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* D3 Node Styles */
+        .node circle {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .node rect {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1));
+        }
+
+        .node:hover rect {
+            transform: scale(1.02);
+            filter: drop-shadow(0 4px 6px rgb(0 0 0 / 0.1));
+        }
+
+        .node text {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            pointer-events: none;
+            /* Let clicks pass through to rect */
+        }
+
+        .link {
+            fill: none;
+            stroke: #86efac;
+            stroke-width: 2px;
+            stroke-dasharray: 6 4;
+            animation: dash 30s linear infinite;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -200;
+            }
+        }
+
+        /* Floating Add Button for D3 Nodes */
+        .node-btn {
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .node:hover .node-btn {
+            opacity: 1;
+        }
+
+        .node-btn circle {
+            fill: white;
+            stroke: #4ade80;
+            stroke-width: 1.5;
+        }
+
+        .node-btn text {
+            fill: #507D55;
+            font-size: 16px;
+            font-weight: bold;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+        }
+
+        .node-btn:hover circle {
+            fill: #f0fdf4;
+            transform: scale(1.1);
+        }
+
+        /* Editing input overlay */
+        .node-input-container {
+            position: absolute;
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: white;
+            border: 2px solid #507D55;
+            border-radius: 8px;
+            padding: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .node-input-container input {
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 14px;
+            outline: none;
+            width: 150px;
+        }
+
+        .node-input-container input:focus {
+            border-color: #507D55;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light text-text-main antialiased selection:bg-primary selection:text-white">
+    <div class="relative flex h-screen w-full flex-col overflow-hidden bg-background-light">
+
+        <!-- ===== HEADER ===== -->
+        <header
+            class="flex-shrink-0 z-50 flex items-center justify-between border-b border-slate-200 bg-white/95 backdrop-blur-sm px-6 sm:px-10 py-3">
+            <div class="flex items-center gap-3">
+                <a href="../../hub/code.html"
+                    class="text-primary hover:bg-primary-50 transition-colors p-1.5 rounded-lg flex items-center justify-center mr-2">
+                    <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                </a>
+                <div class="text-primary size-8 flex items-center justify-center bg-primary-50 rounded-full p-1">
+                    <span class="material-symbols-outlined text-2xl">spa</span>
+                </div>
+                <h2 class="text-slate-900 text-lg font-bold leading-tight tracking-tight flex gap-2">
+                    <span>?�命種�?計畫</span>
+                    <span class="font-normal text-slate-400">/</span>
+                    <span>Seed of Life</span>
+                </h2>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="p-2 rounded-lg hover:bg-slate-50 transition-colors text-slate-500">
+                    <span class="material-symbols-outlined text-[22px]">search</span>
+                </button>
+                <button class="relative p-2 rounded-lg hover:bg-slate-50 transition-colors text-slate-500">
+                    <span class="material-symbols-outlined text-[22px]">notifications</span>
+                    <span
+                        class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
+                <button
+                    class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors text-sm font-medium text-slate-700">
+                    <span class="material-symbols-outlined text-[18px]">account_circle</span>
+                    <span class="hidden sm:inline">Profile</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="flex flex-col flex-1 overflow-hidden">
+            <!-- Breadcrumbs & Actions Area -->
+            <div class="px-6 sm:px-10 pt-6 pb-4 bg-background-light flex-shrink-0">
+                <div class="flex items-center gap-2 text-sm text-text-secondary mb-4">
+                    <a class="hover:text-primary transition-colors flex items-center gap-1"
+                        href="../../hub/code.html">
+                        <span>?��?森�? / Case Forest</span>
+                    </a>
+                    <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                    <span class="font-medium text-primary">Goal 01</span>
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <span
+                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-primary-100 text-primary-700 uppercase tracking-wider">Goal
+                                01</span>
+                            <span
+                                class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-500 border border-slate-200">?��?策略
+                                / Prenatal</span>
+                        </div>
+                        <h1 class="text-2xl font-bold tracking-tight text-slate-900 mb-1">
+                            ?��?安全?��??��?穩�? / Bio-Safety & Emotional Stability
+                        </h1>
+                        <p class="text-sm text-text-secondary max-w-2xl">
+                            建�??�本?��?活�??�網，�?供�?緒修復�?穩�??�基礎環境�?
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mind Map Container (Takes up remaining space) -->
+            <div class="flex-1 px-6 sm:px-10 pb-6 overflow-hidden relative">
+                <div
+                    class="w-full h-full bg-white border border-slate-200 rounded-xl shadow-sm relative flex flex-col overflow-hidden">
+
+                    <!-- Toolbar overlay -->
+                    <div class="absolute top-4 right-4 z-10 flex flex-col gap-2">
+                        <div
+                            class="bg-white rounded-lg border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+                            <button id="zoom-in" title="Zoom In"
+                                class="p-2 hover:bg-slate-50 text-slate-600 transition-colors border-b border-slate-100">
+                                <span class="material-symbols-outlined text-[20px] block">zoom_in</span>
+                            </button>
+                            <button id="zoom-out" title="Zoom Out"
+                                class="p-2 hover:bg-slate-50 text-slate-600 transition-colors border-b border-slate-100">
+                                <span class="material-symbols-outlined text-[20px] block">zoom_out</span>
+                            </button>
+                            <button id="reset-view" title="Reset View"
+                                class="p-2 hover:bg-slate-50 text-slate-600 transition-colors">
+                                <span class="material-symbols-outlined text-[20px] block">center_focus_strong</span>
+                            </button>
+                        </div>
+                        <button id="clear-map" title="Reset to Default"
+                            class="p-2 bg-white rounded-lg border border-red-200 text-red-500 hover:bg-red-50 hover:border-red-300 transition-colors shadow-sm">
+                            <span class="material-symbols-outlined text-[20px] block">delete_sweep</span>
+                        </button>
+                    </div>
+
+                    <!-- Instructions overlay -->
+                    <div
+                        class="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-lg p-3 text-xs text-slate-600 shadow-sm pointer-events-none">
+                        <div class="font-bold text-slate-800 mb-1 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[14px]">info</span> ?��??��? / Tips
+                        </div>
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li>滑�??��?節點�???<b>+</b> ?��??�支<br>(Hover & click + to add node)</li>
+                            <li><b>????��?</b>節點�?字可?��?編輯<br>(Double-click text to edit)</li>
+                            <li>?�曳節點可移�?位置<br>(Drag nodes to move)</li>
+                            <li>滾輪縮放，�??�空?��?平移<br>(Scroll to zoom, drag background to pan)</li>
+                        </ul>
+                    </div>
+
+                    <!-- SVG Container -->
+                    <div id="mindmap-canvas" class="w-full h-full flex-1"></div>
+
+                    <!-- HTML Input Overlay for Editing -->
+                    <div id="edit-overlay" class="node-input-container">
+                        <input type="text" id="edit-zh" placeholder="中�??�稱 (Chinese)" class="mb-1">
+                        <input type="text" id="edit-en" placeholder="English Name">
+                        <div class="flex justify-end gap-2 mt-2">
+                            <button id="edit-cancel"
+                                class="text-xs text-slate-500 hover:text-slate-800 px-2 py-1">?��?</button>
+                            <button id="edit-save"
+                                class="text-xs bg-primary text-white rounded px-3 py-1 hover:bg-primary-600">?��?</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- D3.js Application Logic -->
+    <script>
+        // --- 1. Data Initialization & Storage ---
+        const STORAGE_KEY = 'seed_of_life_goal_01_mindmap_v1';
+
+        // Default seed data matching user request
+        const defaultData = {
+            id: "root",
+            zh: "?��?安全??,
+            en: "Bio-Safety",
+            isRoot: true,
+            children: []
+        };
+
+        // Load from local storage or use default
+        let treeData = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (!treeData) {
+            treeData = JSON.parse(JSON.stringify(defaultData));
+        }
+
+        // Save to local storage function
+        function saveToStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(treeData));
+        }
+
+        // --- 2. D3 Setup ---
+        const container = document.getElementById('mindmap-canvas');
+        let width = container.clientWidth;
+        let height = container.clientHeight;
+
+        // Create main SVG
+        const svg = d3.select("#mindmap-canvas")
+            .append("svg")
+            .attr("width", "100%")
+            .attr("height", "100%")
+            .attr("viewBox", [0, 0, width, height]);
+
+        // Main group for zooming/panning
+        const gMain = svg.append("g").attr("class", "mindmap-g");
+
+        // Groups for links and nodes to ensure proper z-index layering
+        const gLinks = gMain.append("g").attr("class", "links");
+        const gNodes = gMain.append("g").attr("class", "nodes");
+
+        // Zoom setup
+        const zoom = d3.zoom()
+            .scaleExtent([0.3, 3])
+            .on("zoom", (event) => {
+                gMain.attr("transform", event.transform);
+                hideEditOverlay(); // Hide overlay when panning/zooming
+            });
+
+        svg.call(zoom);
+
+        // Center on screen initially
+        svg.call(zoom.transform, d3.zoomIdentity.translate(width / 2, height / 2).scale(1));
+
+        // Layout parameters
+        // Force simulation for dynamic mind map
+        let simulation = d3.forceSimulation()
+            .force("link", d3.forceLink().id(d => d.id).distance(150))
+            .force("charge", d3.forceManyBody().strength(-800))
+            .force("collide", d3.forceCollide().radius(70))
+            .force("center", d3.forceCenter(0, 0));
+
+        let root, nodes, links;
+        let nodeElements, linkElements;
+
+        // --- 3. Update/Render Function ---
+        function update() {
+            // Flatten hierarchical data
+            root = d3.hierarchy(treeData);
+            nodes = root.descendants();
+            links = root.links();
+
+            // Re-bind nodes to hierarchy to allow adding children
+            // Need a unique ID for force graph if not present
+            nodes.forEach(n => {
+                if (!n.data.uId) {
+                    n.data.uId = n.data.id || Math.random().toString(36).substr(2, 9);
+                }
+                n.id = n.data.uId;
+            });
+
+            // Update Simulation Data
+            simulation.nodes(nodes);
+            simulation.force("link").links(links);
+            simulation.alpha(1).restart();
+
+            // --- LINKS ---
+            linkElements = gLinks.selectAll(".link")
+                .data(links, d => d.target.id);
+
+            linkElements.exit().remove();
+
+            const linkEnter = linkElements.enter()
+                .append("path")
+                .attr("class", "link");
+
+            linkElements = linkEnter.merge(linkElements);
+
+            // --- NODES ---
+            nodeElements = gNodes.selectAll(".node")
+                .data(nodes, d => d.id);
+
+            nodeElements.exit().remove();
+
+            const nodeEnter = nodeElements.enter()
+                .append("g")
+                .attr("class", "node")
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended)
+                );
+
+            // Node Background (Rect)
+            nodeEnter.append("rect")
+                .attr("rx", d => d.data.isRoot ? 16 : 12)
+                .attr("ry", d => d.data.isRoot ? 16 : 12)
+                .attr("fill", d => d.data.isRoot ? "#507D55" : "#ffffff")
+                .attr("stroke", d => d.data.isRoot ? "#3a5e43" : "#86efac")
+                .attr("stroke-width", "2")
+                // Click to focus/select (optional)
+                .on("dblclick", handleNodeDoubleClick);
+
+            // Text Elements
+            const textGroup = nodeEnter.append("g")
+                .attr("class", "node-text");
+
+            textGroup.append("text")
+                .attr("class", "text-zh")
+                .attr("text-anchor", "middle")
+                .attr("fill", d => d.data.isRoot ? "white" : "#345237")
+                .attr("font-size", d => d.data.isRoot ? "14px" : "13px")
+                .attr("font-weight", "700")
+                .attr("dy", "-2px");
+
+            textGroup.append("text")
+                .attr("class", "text-en")
+                .attr("text-anchor", "middle")
+                .attr("fill", d => d.data.isRoot ? "rgba(255,255,255,0.9)" : "#507D55")
+                .attr("font-size", d => d.data.isRoot ? "11px" : "10px")
+                .attr("font-weight", "500")
+                .attr("dy", "14px");
+
+            // Add "+" Button
+            const addBtn = nodeEnter.append("g")
+                .attr("class", "node-btn")
+                .on("click", handleAddNode);
+
+            addBtn.append("circle")
+                .attr("r", 10);
+
+            addBtn.append("text")
+                .text("+");
+
+            // Merge Enter and Update
+            nodeElements = nodeEnter.merge(nodeElements);
+
+            // Update text content and rect dimensions dynamically based on text
+            nodeElements.each(function (d) {
+                const el = d3.select(this);
+
+                // Set text
+                el.select(".text-zh").text(d.data.zh);
+                el.select(".text-en").text(d.data.en);
+
+                // Calculate size based on longest word (rough estimate)
+                const maxChars = Math.max(d.data.zh.length * 2, d.data.en.length);
+                const rectWidth = Math.max(120, maxChars * 8);
+                const rectHeight = d.data.isRoot ? 60 : 50;
+
+                // Adjust rect size and position (centered)
+                el.select("rect")
+                    .attr("width", rectWidth)
+                    .attr("height", rectHeight)
+                    .attr("x", -rectWidth / 2)
+                    .attr("y", -rectHeight / 2);
+
+                // Adjust "+" button position (bottom right)
+                el.select(".node-btn")
+                    .attr("transform", `translate(${rectWidth / 2}, ${rectHeight / 2 - 5})`);
+            });
+        }
+
+        // --- 4. Simulation Tick (Animation) ---
+        simulation.on("tick", () => {
+            if (!linkElements || !nodeElements) return;
+
+            linkElements.attr("d", d => {
+                // Curved bezier path
+                const dx = d.target.x - d.source.x;
+                const dy = d.target.y - d.source.y;
+                const dr = Math.sqrt(dx * dx + dy * dy) * 1.5; // Curvature
+                return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${d.target.x},${d.target.y}`;
+            });
+
+            nodeElements.attr("transform", d => `translate(${d.x},${d.y})`);
+
+            // Update overlay position if visible
+            if (activeEditNode) {
+                updateOverlayPosition();
+            }
+        });
+
+        // --- 5. Interactions ---
+
+        // Drag functions
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+            hideEditOverlay();
+        }
+
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            // Don't release fx/fy to keep layout somewhat stable, or release to bouncy
+            d.fx = null;
+            d.fy = null;
+        }
+
+        // Add Node
+        function handleAddNode(event, d) {
+            event.stopPropagation();
+            hideEditOverlay();
+
+            const newNode = {
+                uId: Math.random().toString(36).substr(2, 9),
+                zh: "?�目�?,
+                en: "New Goal",
+                children: []
+            };
+
+            if (!d.data.children) d.data.children = [];
+            d.data.children.push(newNode);
+
+            saveToStorage();
+            update();
+
+            // Jump simulation slightly to separate new node
+            simulation.alpha(0.3).restart();
+        }
+
+        // Edit Node Overlay
+        const overlay = document.getElementById('edit-overlay');
+        const inputZh = document.getElementById('edit-zh');
+        const inputEn = document.getElementById('edit-en');
+        let activeEditNode = null;
+
+        function handleNodeDoubleClick(event, d) {
+            event.stopPropagation();
+            activeEditNode = d;
+
+            inputZh.value = d.data.zh || "";
+            inputEn.value = d.data.en || "";
+
+            overlay.style.display = 'flex';
+            updateOverlayPosition();
+            inputZh.focus();
+        }
+
+        function updateOverlayPosition() {
+            if (!activeEditNode) return;
+            // Get screen coordinates
+            const transform = d3.zoomTransform(svg.node());
+            const x = transform.applyX(activeEditNode.x);
+            const y = transform.applyY(activeEditNode.y);
+
+            // Position overlay above the node roughly
+            overlay.style.left = `${x}px`;
+            overlay.style.top = `${y - 100}px`; // Offset above node
+            overlay.style.transform = "translateX(-50%)"; // Center horizontally
+        }
+
+        function hideEditOverlay() {
+            overlay.style.display = 'none';
+            activeEditNode = null;
+        }
+
+        function saveEdit() {
+            if (activeEditNode) {
+                const newZh = inputZh.value.trim();
+                const newEn = inputEn.value.trim();
+
+                // Only save if not completely empty
+                if (newZh || newEn) {
+                    activeEditNode.data.zh = newZh || "";
+                    activeEditNode.data.en = newEn || "";
+                    saveToStorage();
+                    update();
+                }
+                hideEditOverlay();
+            }
+        }
+
+        document.getElementById('edit-save').addEventListener('click', saveEdit);
+        document.getElementById('edit-cancel').addEventListener('click', hideEditOverlay);
+
+        // Enter key to save
+        inputZh.addEventListener('keydown', (e) => { if (e.key === 'Enter') inputEn.focus(); });
+        inputEn.addEventListener('keydown', (e) => { if (e.key === 'Enter') saveEdit(); });
+
+        // Click outside SVG background hides overlay
+        svg.on('click', () => { hideEditOverlay(); });
+
+        // --- 6. Toolbar Controls ---
+        document.getElementById('zoom-in').addEventListener('click', () => {
+            svg.transition().duration(300).call(zoom.scaleBy, 1.3);
+        });
+
+        document.getElementById('zoom-out').addEventListener('click', () => {
+            svg.transition().duration(300).call(zoom.scaleBy, 0.7);
+        });
+
+        document.getElementById('reset-view').addEventListener('click', () => {
+            svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity.translate(width / 2, height / 2).scale(1));
+        });
+
+        document.getElementById('clear-map').addEventListener('click', () => {
+            if (confirm('確�?要�??��??�自訂�?點並?�復?�設?��? / Are you sure you want to reset the mind map?')) {
+                treeData = JSON.parse(JSON.stringify(defaultData));
+                saveToStorage();
+                update();
+                svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity.translate(width / 2, height / 2).scale(1));
+            }
+        });
+
+        // Initialize display
+        update();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            width = container.clientWidth;
+            height = container.clientHeight;
+            // Update viewBox is handled by internal DOM resizing, but bounding center changes
+            simulation.force("center", d3.forceCenter(0, 0));
+            update();
+        });
+
+    </script>
+</body>
+
+</html>
+

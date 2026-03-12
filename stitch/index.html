@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <!-- Auto-redirect if already logged in -->
+    <script>
+        if (localStorage.getItem('sol_user')) {
+            window.location.replace('hub/code.html#forest');
+        }
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>生命種子計畫 — 登入 / Seed of Life — Login</title>
+    <meta name="description"
+        content="Seed of Life: Bilingual Professional Collaboration Platform for case management." />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #F0F4F0;
+            --card: #FFFFFF;
+            --primary: #4A8C5C;
+            --primary-light: #E8F5E9;
+            --accent-pink: #F8BBD0;
+            --accent-green: #C8E6C9;
+            --accent-blue: #B3E5FC;
+            --text-main: #1A2E1A;
+            --text-sub: #5A7A5A;
+            --text-muted: #8FA88F;
+            --border: #D5E3D5;
+            --shadow: 0 8px 32px rgba(74, 140, 92, 0.08);
+            --shadow-lg: 0 20px 60px rgba(74, 140, 92, 0.12);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --font: 'Inter', 'Noto Sans TC', -apple-system, sans-serif;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated background */
+        .bg-pattern {
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(200, 230, 201, 0.5) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(248, 187, 208, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 80%, rgba(179, 229, 252, 0.3) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .floating-leaf {
+            position: fixed;
+            font-size: 2rem;
+            opacity: 0.08;
+            animation: floatLeaf 20s ease-in-out infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .floating-leaf:nth-child(2) {
+            top: 15%;
+            left: 10%;
+            animation-delay: -5s;
+            font-size: 3rem;
+        }
+
+        .floating-leaf:nth-child(3) {
+            top: 70%;
+            left: 80%;
+            animation-delay: -10s;
+            font-size: 2.5rem;
+        }
+
+        .floating-leaf:nth-child(4) {
+            top: 30%;
+            left: 75%;
+            animation-delay: -15s;
+        }
+
+        .floating-leaf:nth-child(5) {
+            top: 80%;
+            left: 25%;
+            animation-delay: -7s;
+            font-size: 3.5rem;
+        }
+
+        @keyframes floatLeaf {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            25% {
+                transform: translateY(-30px) rotate(10deg);
+            }
+
+            50% {
+                transform: translateY(-10px) rotate(-5deg);
+            }
+
+            75% {
+                transform: translateY(-25px) rotate(8deg);
+            }
+        }
+
+        /* Login Container */
+        .login-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 440px;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 48px 40px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(74, 140, 92, 0.08);
+            backdrop-filter: blur(20px);
+        }
+
+        /* Logo Area */
+        .logo-area {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .logo-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary) 0%, #66BB6A 100%);
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 24px rgba(74, 140, 92, 0.25);
+        }
+
+        .logo-icon .material-icons-outlined {
+            font-size: 32px;
+            color: white;
+        }
+
+        .logo-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        .logo-subtitle {
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-top: 6px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .form-label span {
+            font-weight: 400;
+            color: var(--text-muted);
+            margin-left: 4px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-family: var(--font);
+            color: var(--text-main);
+            background: #FAFCFA;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(74, 140, 92, 0.1);
+        }
+
+        /* Submit */
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary) 0%, #66BB6A 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            font-family: var(--font);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 28px;
+            box-shadow: 0 4px 16px rgba(74, 140, 92, 0.3);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(74, 140, 92, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-btn .material-icons-outlined {
+            font-size: 20px;
+        }
+
+        /* Footer */
+        .login-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Role selector pills */
+        .role-pills {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .role-pill {
+            flex: 1;
+            padding: 10px 8px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #FAFCFA;
+            font-size: 12px;
+            font-family: var(--font);
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        .role-pill:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .role-pill.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .role-pill .material-icons-outlined {
+            font-size: 18px;
+            display: block;
+            margin: 0 auto 4px;
+        }
+
+        /* Color tags */
+        .color-tags {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .color-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .color-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .color-dot.pink {
+            background: var(--accent-pink);
+        }
+
+        .color-dot.green {
+            background: var(--accent-green);
+        }
+
+        .color-dot.blue {
+            background: var(--accent-blue);
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 36px 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-pattern"></div>
+    <div class="floating-leaf">🌱</div>
+    <div class="floating-leaf">🍃</div>
+    <div class="floating-leaf">🌿</div>
+    <div class="floating-leaf">☘️</div>
+    <div class="floating-leaf">🌾</div>
+
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <span class="material-icons-outlined">eco</span>
+                </div>
+                <div class="logo-title">生命種子計畫</div>
+                <div class="logo-subtitle">Seed of Life — Professional Collaboration Platform</div>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">帳號 <span>/ Username</span></label>
+                    <input class="form-input" type="text" id="username" placeholder="請輸入帳號 / Enter username" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">密碼 <span>/ Password</span></label>
+                    <input class="form-input" type="password" id="password" placeholder="請輸入密碼 / Enter password"
+                        required />
+                </div>
+                <button class="login-btn" type="submit">
+                    <span class="material-icons-outlined">login</span>
+                    登入 / Login
+                </button>
+            </form>
+
+        </div>
+
+        <div class="login-footer">
+            © 2026 生命種子計畫 Seed of Life Project<br />
+            中英並用專業協作平台 / Bilingual Collaboration Platform
+        </div>
+    </div>
+
+    <script>
+        function selectRole(el, role) {
+            document.querySelectorAll('.role-pill').forEach(p => p.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('.login-btn');
+            btn.innerHTML = '<span class="material-icons-outlined" style="animation:spin 1s linear infinite">refresh</span> 驗證中... / Verifying...';
+            btn.disabled = true;
+
+            const username = document.getElementById('username').value;
+            localStorage.setItem('sol_user', JSON.stringify({ username, role: 'SW', loggedIn: true }));
+
+            setTimeout(() => {
+                window.location.href = 'hub/code.html';
+            }, 800);
+        }
+    </script>
+    <style>
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</body>
+
+</html

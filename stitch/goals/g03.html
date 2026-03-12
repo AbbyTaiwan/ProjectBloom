@@ -1,0 +1,904 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goal 03: 盤點內在天賦強項 / Inventory of Inner Strengths</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet">
+    <!-- D3.js for mind map visualization -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            overflow: hidden;
+        }
+
+        .mindmap-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .mindmap-svg-wrapper {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .mindmap-node circle {
+            cursor: pointer;
+            stroke-width: 2px;
+            transition: all 0.2s ease;
+        }
+
+        .mindmap-node text {
+            font-size: 14px;
+            font-weight: 500;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            pointer-events: none;
+            user-select: none;
+            fill: white;
+        }
+
+        .mindmap-node:hover circle {
+            filter: brightness(1.1);
+        }
+
+        .mindmap-link {
+            fill: none;
+            stroke: #cbd5e1;
+            stroke-width: 2px;
+            stroke-linecap: round;
+        }
+
+        .mindmap-node-btn {
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .mindmap-node:hover .mindmap-node-btn {
+            opacity: 1;
+        }
+
+        .mindmap-node-btn circle {
+            fill: white;
+            stroke: #4ade80;
+            stroke-width: 1.5px;
+        }
+
+        .mindmap-node-btn text {
+            fill: #4ade80;
+            font-size: 16px;
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        .mindmap-node-btn:hover circle {
+            fill: #f0fdf4;
+        }
+
+        .edit-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            min-width: 400px;
+        }
+
+        .edit-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .edit-modal input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            font-family: inherit;
+        }
+
+        .edit-modal input:focus {
+            outline: none;
+            border-color: #4ade80;
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1);
+        }
+
+        .edit-modal-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .edit-modal button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .edit-modal .btn-save {
+            background: #4ade80;
+            color: white;
+        }
+
+        .edit-modal .btn-save:hover {
+            background: #22c55e;
+        }
+
+        .edit-modal .btn-cancel {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .edit-modal .btn-cancel:hover {
+            background: #e2e8f0;
+        }
+
+        .edit-modal .btn-delete {
+            background: #fca5a5;
+            color: white;
+            margin-right: auto;
+        }
+
+        .edit-modal .btn-delete:hover {
+            background: #f87171;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50">
+    <div class="flex h-screen flex-col overflow-hidden bg-white">
+        <!-- Header -->
+        <header
+            class="flex-shrink-0 z-50 flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
+            <div class="flex items-center gap-3">
+                <a href="../hub/code.html#forest"
+                    class="text-slate-600 hover:bg-slate-100 transition-colors p-2 rounded-lg">
+                    <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                </a>
+                <div class="text-green-600 size-8 flex items-center justify-center bg-green-100 rounded-full p-1">
+                    <span class="material-symbols-outlined text-2xl">spa</span>
+                </div>
+                <h1 class="text-slate-900 text-lg font-bold">生命種子計畫 / Seed of Life</h1>
+            </div>
+            <!-- 思考 Banner -->
+            <div class="flex-1 max-w-2xl px-6 ml-6 mr-4">
+                <div class="border border-red-500 rounded-md bg-white px-4 py-1.5 flex items-center gap-2">
+                    <span class="text-slate-500 font-bold whitespace-nowrap text-[15px]">思考：</span>
+                    <span id="thought-content" class="text-[15px] font-medium text-slate-800 flex-1 outline-none relative" contenteditable="true" spellcheck="false" data-default="個案是否已經看見自己身上閃閃發光的部分？">個案是否已經看見自己身上閃閃發光的部分？</span>
+                    <span id="thought-save-status" class="text-[10px] text-green-500 font-bold opacity-0 transition-opacity ml-2">已儲存</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="zoom-in-btn" class="p-2 rounded-lg hover:bg-slate-100 transition-colors text-slate-600"
+                    title="放大">
+                    <span class="material-symbols-outlined">zoom_in</span>
+                </button>
+                <button id="zoom-out-btn" class="p-2 rounded-lg hover:bg-slate-100 transition-colors text-slate-600"
+                    title="縮小">
+                    <span class="material-symbols-outlined">zoom_out</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="flex flex-1 overflow-hidden gap-4 p-4 bg-slate-50">
+            <!-- Sidebar Info -->
+            <div class="w-64 flex-shrink-0 bg-white rounded-lg shadow-sm p-6 overflow-y-auto border border-slate-200">
+                <div class="mb-4">
+                    <span
+                        class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full mb-2">GOAL
+                        03</span>
+                    <h2 class="text-xl font-bold text-slate-900 mb-2">盤點內在天賦強項</h2>
+                    <p class="text-sm text-slate-600">Inventory of Inner Strengths</p>
+                </div>
+                <div class="border-t border-slate-200 pt-4">
+                    <h3 class="font-bold text-sm text-slate-900 mb-3">操作指南 / Tips</h3>
+                    <ul class="text-xs text-slate-600 space-y-2">
+                        <li>✓ 懸停節點 → 點擊 <b>+</b> 新增</li>
+                        <li>✓ 雙擊節點文字編輯</li>
+                        <li>✓ 拖曳節點移動</li>
+                        <li>✓ 滾輪縮放地圖</li>
+                        <li>✓ 拖曳背景平移</li>
+                    </ul>
+                </div>
+                <!-- Shared Resources List -->
+                <div class="border-t border-slate-200 pt-4 mt-4">
+                    <h3 class="font-bold text-sm text-slate-900 mb-3 flex items-center justify-between">
+                        <span>共享資源 / Resources</span>
+                        <span class="bg-slate-100 text-slate-500 text-[10px] px-2 py-0.5 rounded-full"
+                            id="resCount">0</span>
+                    </h3>
+                    <div id="resourceList" class="space-y-3">
+                        <!-- Resources will be injected here -->
+                    </div>
+                </div>
+
+                <button id="clear-btn"
+                    class="w-full mt-4 bg-red-500 text-white text-sm font-medium py-2 rounded-lg hover:bg-red-600 transition-colors">
+                    重置心智圖
+                </button>
+            </div>
+
+            <!-- Mind Map Canvas -->
+            <div class="flex-1 bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                <div class="mindmap-container">
+                    <svg id="mindmap-svg"></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal-overlay" class="edit-modal-overlay hidden"></div>
+    <div id="edit-modal" class="edit-modal hidden">
+        <h2 class="text-lg font-bold text-slate-900 mb-4">編輯節點</h2>
+        <input type="text" id="edit-zh" placeholder="中文名稱 (Chinese)" />
+        <input type="text" id="edit-en" placeholder="English Name" />
+        <div class="edit-modal-buttons">
+            <button id="edit-delete-btn" class="btn-delete">刪除</button>
+            <button id="edit-cancel-btn" class="btn-cancel">取消</button>
+            <button id="edit-save-btn" class="btn-save">保存</button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // Mind Map Component - Universal & Reusable
+        // ============================================
+
+        class MindMap {
+            constructor(containerId, options = {}) {
+                this.containerId = containerId;
+                this.storageKey = options.storageKey || 'mindmap-data';
+                this.colorScheme = options.colorScheme || this.getDefaultColors();
+                this.defaultData = options.defaultData || this.createDefaultRoot('Root');
+
+                this.data = this.loadData();
+                this.selectedNode = null;
+                this.editingNode = null;
+                this.draggedNode = null;
+
+                this.init();
+            }
+
+            getDefaultColors() {
+                return {
+                    root: '#4ade80',      // 綠色
+                    level1: '#60a5fa',    // 藍色
+                    level2: '#fbbf24',    // 黃色
+                    level3: '#f87171',    // 紅色
+                    level4: '#a78bfa',    // 紫色
+                };
+            }
+
+            createDefaultRoot(text) {
+                return {
+                    id: 'root',
+                    zh: text,
+                    en: text,
+                    children: []
+                };
+            }
+
+            loadData() {
+                const stored = localStorage.getItem(this.storageKey);
+                if (stored) {
+                    try {
+                        return JSON.parse(stored);
+                    } catch (e) {
+                        console.error('Error loading data:', e);
+                        return JSON.parse(JSON.stringify(this.defaultData));
+                    }
+                }
+                return JSON.parse(JSON.stringify(this.defaultData));
+            }
+
+            saveData() {
+                localStorage.setItem(this.storageKey, JSON.stringify(this.data));
+            }
+
+            init() {
+                this.svg = d3.select(`#${this.containerId}`);
+
+                // Get container dimensions
+                const container = document.getElementById(this.containerId);
+                const parent = container.parentElement;
+
+                // Use computed dimensions
+                this.width = parent.offsetWidth || 800;
+                this.height = parent.offsetHeight || 600;
+
+                console.log('📐 初始化:', {
+                    width: this.width,
+                    height: this.height,
+                    container: container.tagName,
+                    parent: parent.tagName,
+                    parentClass: parent.className
+                });
+
+                // Set SVG attributes
+                this.svg
+                    .attr('viewBox', `0 0 ${this.width} ${this.height}`)
+                    .attr('preserveAspectRatio', 'xMidYMid meet')
+                    .style('border', '1px solid #e5e7eb');
+
+                // Setup zoom behavior
+                this.g = this.svg.append('g');
+
+                this.zoomBehavior = d3.zoom()
+                    .scaleExtent([0.3, 3])
+                    .on('zoom', (event) => {
+                        this.g.attr('transform', event.transform);
+                    });
+
+                this.svg.call(this.zoomBehavior);
+
+                // Initial pan/zoom
+                this.resetView();
+
+                // First render
+                console.log('🎨 執行第一次渲染');
+                this.render();
+
+                // Setup event handlers
+                this.setupEventHandlers();
+
+                console.log('✓ 初始化完成');
+
+                // Handle window resize
+                const resizeObserver = new ResizeObserver(() => {
+                    const newWidth = parent.offsetWidth;
+                    const newHeight = parent.offsetHeight;
+                    if (newWidth !== this.width || newHeight !== this.height) {
+                        this.width = newWidth;
+                        this.height = newHeight;
+                        this.svg.attr('viewBox', `0 0 ${this.width} ${this.height}`);
+                        this.render();
+                    }
+                });
+                resizeObserver.observe(parent);
+            }
+
+            setupEventHandlers() {
+                document.getElementById('reset-view-btn')?.addEventListener('click', () => this.resetView());
+                document.getElementById('zoom-in-btn')?.addEventListener('click', () => this.zoomIn());
+                document.getElementById('zoom-out-btn')?.addEventListener('click', () => this.zoomOut());
+                document.getElementById('auto-layout-btn')?.addEventListener('click', () => this.autoLayout());
+                document.getElementById('clear-btn')?.addEventListener('click', () => this.clearData());
+                document.getElementById('edit-save-btn')?.addEventListener('click', () => this.saveEdit());
+                document.getElementById('edit-cancel-btn')?.addEventListener('click', () => this.closeEditModal());
+                document.getElementById('edit-delete-btn')?.addEventListener('click', () => this.deleteNode());
+                document.getElementById('edit-modal-overlay')?.addEventListener('click', () => this.closeEditModal());
+            }
+
+            render() {
+                this.g.selectAll('*').remove();
+
+                // Create hierarchy
+                const root = d3.hierarchy(this.data);
+                const nodes = root.descendants();
+                const links = root.links();
+
+                console.log('🎨 渲染:', { nodeCount: nodes.length, linkCount: links.length });
+
+                // Check if nodes already have positions saved (user has manually positioned them)
+                const hasManualPositions = nodes.some(n => n.data.x !== undefined && n.data.y !== undefined && n.data.manuallyPositioned === true);
+
+                if (!hasManualPositions) {
+                    console.log('📐 使用樹狀布局（整齊排列）');
+                    // Use tree layout for clean, organized structure
+                    const treeLayout = d3.tree()
+                        .nodeSize([80, 200]) // [height spacing, width spacing]
+                        .separation((a, b) => a.parent === b.parent ? 1 : 1.2);
+
+                    treeLayout(root);
+
+                    // Assign positions from tree layout (x and y are swapped for horizontal layout)
+                    nodes.forEach(n => {
+                        if (n.data.x === undefined || n.data.y === undefined) {
+                            // Swap x and y for horizontal layout (left to right)
+                            n.data.x = n.y;  // tree's y becomes our x (horizontal position)
+                            n.data.y = n.x;  // tree's x becomes our y (vertical position)
+                            n.data.manuallyPositioned = false;
+                        }
+                        n.x = n.data.x;
+                        n.y = n.data.y;
+                    });
+
+                    // Save the initial layout
+                    this.saveData();
+                } else {
+                    console.log('✓ 使用已保存的位置（用戶已調整）');
+                    // Restore positions from data
+                    nodes.forEach(n => {
+                        if (n.data.x !== undefined && n.data.y !== undefined) {
+                            n.x = n.data.x;
+                            n.y = n.data.y;
+                        }
+                    });
+                }
+
+                // Draw links first (curved paths like markmap)
+                const linkElements = this.g.selectAll('.mindmap-link')
+                    .data(links)
+                    .enter()
+                    .append('path')
+                    .attr('class', 'mindmap-link')
+                    .attr('d', d => {
+                        const sx = d.source.x;
+                        const sy = d.source.y;
+                        const tx = d.target.x;
+                        const ty = d.target.y;
+
+                        // Create smooth curve from left to right
+                        const mx = (sx + tx) / 2;
+                        return `M${sx},${sy} C${mx},${sy} ${mx},${ty} ${tx},${ty}`;
+                    })
+                    .attr('stroke', '#94a3b8')
+                    .attr('stroke-width', 2);
+
+                // Draw nodes
+                const nodeGroups = this.g.selectAll('.mindmap-node')
+                    .data(nodes)
+                    .enter()
+                    .append('g')
+                    .attr('class', 'mindmap-node')
+                    .attr('transform', d => `translate(${d.x},${d.y})`);
+
+                // Draw circles
+                nodeGroups.append('circle')
+                    .attr('r', 35)
+                    .attr('fill', d => this.getNodeColor(d))
+                    .attr('stroke', d => this.getNodeColor(d))
+                    .style('cursor', 'pointer')
+                    .on('click', (event, d) => {
+                        event.stopPropagation();
+                    })
+                    .on('dblclick', (event, d) => {
+                        event.stopPropagation();
+                        if (d && d.data) this.openEditModal(d);
+                    });
+
+                // Draw text
+                nodeGroups.append('text')
+                    .attr('text-anchor', 'middle')
+                    .attr('dominant-baseline', 'middle')
+                    .attr('fill', 'white')
+                    .attr('font-weight', 'bold')
+                    .attr('font-size', '13px')
+                    .text(d => (d && d.data && d.data.zh) ? d.data.zh.substring(0, 5) : '');
+
+                // Draw add-button
+                nodeGroups.append('g')
+                    .attr('class', 'mindmap-node-btn')
+                    .attr('transform', 'translate(48, -48)')
+                    .style('cursor', 'pointer')
+                    .on('click', (event, d) => {
+                        event.stopPropagation();
+                        if (d && d.data) this.addChild(d);
+                    })
+                    .append('circle')
+                    .attr('r', 18)
+                    .attr('fill', 'white')
+                    .attr('stroke', '#4ade80')
+                    .attr('stroke-width', 2);
+
+                nodeGroups.select('.mindmap-node-btn')
+                    .append('text')
+                    .attr('text-anchor', 'middle')
+                    .attr('dominant-baseline', 'middle')
+                    .attr('fill', '#4ade80')
+                    .attr('font-weight', 'bold')
+                    .attr('font-size', '20px')
+                    .attr('pointer-events', 'none')
+                    .text('+');
+
+                // Add drag behavior to nodes
+                nodeGroups.call(d3.drag()
+                    .on('drag', (event, d) => {
+                        if (!d || !d.data) return;
+                        d.x = event.x;
+                        d.y = event.y;
+                        d.data.x = event.x;
+                        d.data.y = event.y;
+                        d.data.manuallyPositioned = true;  // Mark as manually positioned
+                        this.updatePositions();
+                    })
+                    .on('end', () => {
+                        this.saveData();  // Save after drag
+                    }));
+
+                // Only fit to bounds on first render
+                if (!hasManualPositions) {
+                    this.fitToBounds(nodes);
+                }
+            }
+
+            updatePositions() {
+                // Update curved link paths
+                this.g.selectAll('.mindmap-link')
+                    .attr('d', d => {
+                        if (!d.source || !d.target) return '';
+                        const sx = d.source.x;
+                        const sy = d.source.y;
+                        const tx = d.target.x;
+                        const ty = d.target.y;
+
+                        const mx = (sx + tx) / 2;
+                        return `M${sx},${sy} C${mx},${sy} ${mx},${ty} ${tx},${ty}`;
+                    });
+
+                this.g.selectAll('.mindmap-node')
+                    .attr('transform', d => {
+                        if (!d) return '';
+                        return `translate(${d.x || 0},${d.y || 0})`;
+                    });
+            }
+
+            fitToBounds(nodes) {
+                if (nodes.length === 0) return;
+
+                const xs = nodes.map(d => d.x);
+                const ys = nodes.map(d => d.y);
+                const minX = Math.min(...xs);
+                const maxX = Math.max(...xs);
+                const minY = Math.min(...ys);
+                const maxY = Math.max(...ys);
+
+                const padding = 80;
+                const width = maxX - minX + padding * 2;
+                const height = maxY - minY + padding * 2;
+
+                const scale = Math.min(this.width / width, this.height / height, 2);
+                const tx = this.width / 2 - (minX + maxX) / 2 * scale;
+                const ty = this.height / 2 - (minY + maxY) / 2 * scale;
+
+                this.svg.call(
+                    this.zoomBehavior.transform,
+                    d3.zoomIdentity.translate(tx, ty).scale(scale)
+                );
+            }
+
+            getNodeColor(d) {
+                const depth = d.depth || 0;
+                if (depth === 0) return this.colorScheme.root;
+                if (depth === 1) return this.colorScheme.level1;
+                if (depth === 2) return this.colorScheme.level2;
+                if (depth === 3) return this.colorScheme.level3;
+                return this.colorScheme.level4;
+            }
+
+            selectNode(d) {
+                this.selectedNode = d;
+            }
+
+            openEditModal(d) {
+                if (!d || !d.data) return;
+                this.editingNode = d;
+                document.getElementById('edit-zh').value = d.data.zh || '';
+                document.getElementById('edit-en').value = d.data.en || '';
+
+                // Hide delete button for root node
+                const deleteBtn = document.getElementById('edit-delete-btn');
+                if (deleteBtn) {
+                    deleteBtn.style.display = d.data.id === 'root' ? 'none' : 'block';
+                }
+
+                document.getElementById('edit-modal-overlay').classList.remove('hidden');
+                document.getElementById('edit-modal').classList.remove('hidden');
+                document.getElementById('edit-zh').focus();
+            }
+
+            closeEditModal() {
+                document.getElementById('edit-modal-overlay').classList.add('hidden');
+                document.getElementById('edit-modal').classList.add('hidden');
+                this.editingNode = null;
+            }
+
+            saveEdit() {
+                if (!this.editingNode) return;
+
+                const zh = document.getElementById('edit-zh').value || '節點';
+                const en = document.getElementById('edit-en').value || 'Node';
+                const editingNodeId = this.editingNode.data.id;
+
+                // Update the actual data object
+                this.editingNode.data.zh = zh;
+                this.editingNode.data.en = en;
+
+                this.saveData();
+
+                // Update text without re-rendering entire graph
+                this.g.selectAll('.mindmap-node')
+                    .filter(d => d.data.id === editingNodeId)
+                    .select('text')
+                    .text(zh.substring(0, 5));
+
+                this.closeEditModal();
+            }
+
+            deleteNode() {
+                if (!this.editingNode || this.editingNode.data.id === 'root') return;
+
+                const parent = this.editingNode.parent;
+                if (parent) {
+                    const idx = parent.data.children.findIndex(c => c.id === this.editingNode.data.id);
+                    if (idx !== -1) {
+                        parent.data.children.splice(idx, 1);
+                    }
+                }
+
+                this.saveData();
+                this.closeEditModal();
+                this.render();
+            }
+
+            addChild(d) {
+                if (!d || !d.data) return;
+                const newId = 'node-' + Date.now();
+                const siblings = d.data.children || [];
+                const siblingCount = siblings.length;
+
+                // Default position: to the right of parent, vertically spaced
+                const newX = (d.data.x || 0) + 200;  // 200px to the right
+                const newY = (d.data.y || 0) + (siblingCount * 80) - (siblingCount * 40); // Vertically centered around parent
+
+                const newChild = {
+                    id: newId,
+                    zh: '新節點',
+                    en: 'New Node',
+                    x: newX,
+                    y: newY,
+                    manuallyPositioned: false,  // Not manually positioned yet
+                    children: []
+                };
+
+                if (!d.data.children) d.data.children = [];
+                d.data.children.push(newChild);
+
+                this.saveData();
+                this.render();
+
+                // Auto-open edit modal for new node
+                const updatedRoot = d3.hierarchy(this.data);
+                const newNode = updatedRoot.descendants().find(n => n.data.id === newId);
+                if (newNode) {
+                    setTimeout(() => this.openEditModal(newNode), 100);
+                }
+            }
+
+            autoLayout() {
+                // Remove all manual positioning flags to trigger tree layout
+                const removeManualPositions = (node) => {
+                    if (node.manuallyPositioned !== undefined) {
+                        delete node.manuallyPositioned;
+                    }
+                    if (node.x !== undefined) delete node.x;
+                    if (node.y !== undefined) delete node.y;
+                    if (node.children) {
+                        node.children.forEach(child => removeManualPositions(child));
+                    }
+                };
+
+                removeManualPositions(this.data);
+                this.saveData();
+                this.render();
+            }
+
+            clearData() {
+                if (confirm('確定要清除所有數據嗎？此操作無法撤銷！')) {
+                    // Clear localStorage completely to reset layout
+                    localStorage.removeItem(this.storageKey);
+                    this.data = JSON.parse(JSON.stringify(this.defaultData));
+                    this.saveData();
+                    this.render();
+                }
+            }
+
+            resetView() {
+                const x = this.width / 2;
+                const y = this.height / 2;
+                const k = 1;
+
+                this.svg.transition()
+                    .duration(750)
+                    .call(
+                        this.zoomBehavior.transform,
+                        d3.zoomIdentity.translate(x, y).scale(k)
+                    );
+            }
+
+            zoomIn() {
+                this.svg.transition().duration(300).call(
+                    this.zoomBehavior.scaleBy,
+                    1.3
+                );
+            }
+
+            zoomOut() {
+                this.svg.transition().duration(300).call(
+                    this.zoomBehavior.scaleBy,
+                    0.7
+                );
+            }
+
+            handleResize() {
+                const container = document.getElementById(this.containerId);
+                this.width = container.parentElement.offsetWidth;
+                this.height = container.parentElement.offsetHeight;
+                this.svg.attr('viewBox', `0 0 ${this.width} ${this.height}`);
+                this.render();
+            }
+        }
+
+        // ============================================
+        // Initialize for Goal 01
+        // ============================================
+
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('📄 DOMContentLoaded 事件觸發', {
+                document: document.readyState,
+                d3: typeof d3,
+                svg: document.getElementById('mindmap-svg')
+            });
+
+            // Wait a moment for CSS to be applied
+            setTimeout(() => {
+                try {
+                    const defaultData = {
+                        id: 'root',
+                        zh: '天賦強項',
+                        en: 'Inner Strengths',
+                        children: [
+                            {
+                                id: 'talents',
+                                zh: '隱藏天賦',
+                                en: 'Hidden Talents',
+                                children: []
+                            },
+                            {
+                                id: 'success',
+                                zh: '成功經驗',
+                                en: 'Success Experiences',
+                                children: []
+                            },
+                            {
+                                id: 'utilization',
+                                zh: '強項運用',
+                                en: 'Utilization of Strengths',
+                                children: []
+                            },
+                            {
+                                id: 'awareness',
+                                zh: '自我察覺',
+                                en: 'Self-Awareness',
+                                children: []
+                            }
+                        ]
+                    };
+
+                    const colorScheme = {
+                        root: '#4ade80',      // 綠色
+                        level1: '#60a5fa',    // 藍色
+                        level2: '#fbbf24',    // 黃色
+                        level3: '#f87171',    // 紅色
+                        level4: '#a78bfa',    // 紫色
+                    };
+
+                    console.log('🚀 開始初始化心智圖...');
+                    const mindMap = new MindMap('mindmap-svg', {
+                        storageKey: 'goal-03-mindmap',
+                        defaultData: defaultData,
+                        colorScheme: colorScheme
+                    });
+
+                    console.log('✓ Goal 01 Mind Map initialized successfully');
+                    window.mindMap = mindMap; // Expose for debugging
+                } catch (error) {
+                    console.error('❌ 初始化錯誤:', error);
+                    console.error('堆棧:', error.stack);
+                }
+            }, 100);  // 100ms delay to ensure DOM is fully ready
+        });
+    </script>
+    <script>
+        // Load and Render Resources for Goal 01
+        function loadResources() {
+            const listContainer = document.getElementById('resourceList');
+            const countLabel = document.getElementById('resCount');
+            const allRes = JSON.parse(localStorage.getItem('sol_resources') || '[]');
+
+            // Filter by "Goal 01"
+            const goalRes = allRes.filter(r => r.stage === 'Goal 03');
+
+            countLabel.textContent = goalRes.length;
+
+            if (goalRes.length === 0) {
+                listContainer.innerHTML = '<div class="text-xs text-slate-400 italic text-center py-4 bg-slate-50 rounded-lg">目前尚無資源<br>No resources yet</div>';
+                return;
+            }
+
+            listContainer.innerHTML = goalRes.map(res => {
+                let icon = 'description';
+                if (res.type === 'pdf') icon = 'picture_as_pdf';
+                else if (['jpg', 'png'].includes(res.type)) icon = 'image';
+
+                return `
+                <div class="relative bg-white border border-slate-200 rounded-xl p-3 shadow-sm hover:shadow-md hover:border-primary/30 transition-all group cursor-pointer active:scale-95" onclick="alert('📥 下載/預覽檔案：\\n${res.fileName}')">
+                    <!-- Delete Button -->
+                    <button onclick="deleteResource(event, '${res.id}')" class="absolute top-2 right-2 text-slate-300 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-md transition-colors opacity-0 group-hover:opacity-100" title="刪除資源">
+                        <span class="material-icons-outlined text-[16px] block">delete</span>
+                    </button>
+                    
+                    <div class="flex items-start gap-2 mb-2 pr-8">
+                        <div class="bg-blue-50 text-blue-500 p-1.5 rounded-lg">
+                            <span class="material-icons-outlined text-[16px] block">${icon}</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="text-xs font-bold text-slate-800 truncate" title="${res.title}">${res.title}</h4>
+                            <p class="text-[10px] text-slate-500 truncate mt-0.5">${res.fileName}</p>
+                        </div>
+                    </div>
+                    ${res.desc ? `<p class="text-[10px] text-slate-600 leading-tight mb-2 line-clamp-2">${res.desc}</p>` : ''}
+                    <div class="flex items-center justify-between border-t border-slate-100 pt-2 mt-1">
+                        <span class="text-[9px] text-slate-400 font-medium">${res.date}</span>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        // Delete Resource Logic
+        function deleteResource(event, id) {
+            // Stop the click from triggering the parent card's onClick (download alert)
+            event.stopPropagation();
+
+            if (confirm('確定要刪除這份資源嗎？ / Are you sure you want to delete this resource?')) {
+                let allRes = JSON.parse(localStorage.getItem('sol_resources') || '[]');
+                allRes = allRes.filter(r => r.id !== id);
+                localStorage.setItem('sol_resources', JSON.stringify(allRes));
+
+                // Re-render the list
+                loadResources();
+            }
+        }
+
+        // Load on start
+        window.addEventListener('DOMContentLoaded', loadResources);
+    </script>
+</body>
+
+</html>

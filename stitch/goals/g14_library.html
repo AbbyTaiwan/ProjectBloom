@@ -1,0 +1,568 @@
+﻿<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Seed of Life - Resource Library</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#507D55", // Forest Green from reference button
+                        "primary-50": "#f0fdf4",
+                        "primary-100": "#dcfce7",
+                        "primary-200": "#bbf7d0",
+                        "primary-300": "#86efac",
+                        "primary-400": "#4ade80",
+                        "primary-500": "#507D55", // Main brand color
+                        "primary-600": "#406644",
+                        "primary-700": "#345237",
+                        "primary-800": "#2d4430",
+                        "primary-900": "#263929",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a2233",
+                        "text-main": "#111318",
+                        "text-secondary": "#616f89",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "Noto Sans TC", "sans-serif"],
+                        sans: ["Inter", "Noto Sans TC", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px",
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+        details > summary {
+            list-style: none;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light text-text-main antialiased selection:bg-primary selection:text-white">
+<div class="relative flex h-screen w-full overflow-hidden bg-background-light">
+<div class="flex h-full w-[280px] min-w-[280px] flex-col justify-between border-r border-slate-200 bg-surface-light p-4 overflow-y-auto hidden md:flex">
+<div class="flex flex-col gap-6">
+<div class="flex gap-3 px-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-12 shadow-sm" data-alt="Profile picture of a smiling professional woman" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD-rwJY4VenTFa_iAk72m2CkUv6NnIiPIWCkBe_MGD1gSbyPHE2cID1NIIoqI1fdhRoCAlE9hnKvZMxtkLtnK7crAc9Dn6ZdD_HDbwNz8Cx4HxF_GC08JeMSQXaCnckzs-JmDWMP-PtLcVxtDitlmySgE8b-sIjHjA1R3y55GwR52mhMl6QK1G0anAeoD5gjgYpfHcBIS6MnLHpMVYHgncw1skJzJWJUJfSVMOGeXGnUY12fevnuyUtLwhj3HQR7rPKeLGa2RltBjk"");'></div>
+<div class="flex flex-col justify-center">
+<h1 class="text-text-main text-base font-semibold leading-tight"><br/></h1>
+<p class="text-text-secondary text-xs font-normal leading-normal"><br/></p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-slate-50 hover:text-primary transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">pie_chart</span>
+<div class="flex flex-col">
+<span class="text-sm font-medium">Goals Dashboard</span>
+<span class="text-xs text-slate-400 group-hover:text-primary/70">?��??�表板</span>
+</div>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-slate-50 hover:text-primary transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">account_tree</span>
+<div class="flex flex-col">
+<span class="text-sm font-medium">Strategy Map</span>
+<span class="text-xs text-slate-400 group-hover:text-primary/70">策略?��?</span>
+</div>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary font-medium" href="#">
+<span class="material-symbols-outlined text-primary fill-current">library_books</span>
+<div class="flex flex-col">
+<span class="text-sm">Resource Library</span>
+<span class="text-xs text-primary/70">表單資�?</span>
+</div>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-slate-50 hover:text-primary transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">group</span>
+<div class="flex flex-col">
+<span class="text-sm font-medium">Community Forum</span>
+<span class="text-xs text-slate-400 group-hover:text-primary/70">社群論�?</span>
+</div>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-slate-50 hover:text-primary transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">settings</span>
+<div class="flex flex-col">
+<span class="text-sm font-medium">Settings</span>
+<span class="text-xs text-slate-400 group-hover:text-primary/70">設�?</span>
+</div>
+</a>
+</nav>
+</div>
+<div class="mt-auto pt-4 border-t border-slate-100">
+<button class="flex w-full items-center gap-2 rounded-lg p-2 text-text-secondary hover:bg-red-50 hover:text-red-600 transition-colors">
+<span class="material-symbols-outlined">logout</span>
+<div class="flex flex-col items-start">
+<span class="text-sm font-medium">Sign Out</span>
+<span class="text-xs opacity-70">?�出</span>
+</div>
+</button>
+</div>
+</div>
+<div class="flex flex-1 flex-col h-full overflow-hidden">
+<header class="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-surface-light px-6 sm:px-8">
+<div class="flex items-center gap-2 text-sm text-text-secondary">
+<a class="hover:text-primary transition-colors flex items-center gap-1" href="#">
+<span>Home</span><span class="text-slate-300 text-xs">首�?</span>
+</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<a class="hover:text-primary transition-colors flex items-center gap-1" href="#">
+<span>Goal 14: Financial Stability</span><span class="text-slate-300 text-xs">?��?14：財?�穩�?/span>
+</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="font-medium text-primary flex items-center gap-1">
+<span>Resources</span><span class="text-primary/60 text-xs">資�?</span>
+</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="absolute left-2.5 top-2.5 text-slate-400 material-symbols-outlined text-[20px]">search</span>
+<input class="h-10 w-72 rounded-lg border border-slate-200 pl-10 pr-4 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Search resources... / ?��?資�?..." type="text"/>
+</div>
+<button class="flex items-center justify-center rounded-full bg-slate-100 p-2 text-text-secondary hover:bg-primary/10 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto p-6 sm:p-8 bg-background-light">
+<div class="mx-auto max-w-5xl flex flex-col gap-8">
+<div class="flex flex-col gap-6">
+<div class="flex flex-col gap-2">
+<h1 class="text-3xl font-bold tracking-tight text-primary-900">
+                                Goal 14: Resource Library <span class="text-2xl font-medium text-primary-700 ml-2">/ 表單資�?�?/span>
+</h1>
+<p class="text-text-secondary max-w-4xl">
+                                Access organized forms and templates categorized by the 4 stages of support. All documents are available for download in PDF or standard office formats.<br/>
+<span class="text-slate-500 text-sm">存�????�支?��?段�?類�?表單?�模?�。�??��?件�??�以PDF?��?準辦?�格式�?載�?/span>
+</p>
+</div>
+<div class="border-b border-slate-200">
+<nav aria-label="Tabs" class="-mb-px flex gap-8 overflow-x-auto">
+<a aria-current="page" class="border-b-2 border-primary py-4 text-sm font-medium text-primary whitespace-nowrap flex flex-col items-center sm:block" href="#">
+                                    All Stages <span class="text-xs ml-1 font-normal opacity-80 sm:inline block">/ ?�部?�段</span>
+</a>
+<a class="border-b-2 border-transparent py-4 text-sm font-medium text-text-secondary hover:border-primary-300 hover:text-primary-700 transition-colors whitespace-nowrap flex flex-col items-center sm:block" href="#">
+                                    Prenatal <span class="text-xs ml-1 font-normal text-slate-400 sm:inline block">/ ?��?</span>
+</a>
+<a class="border-b-2 border-transparent py-4 text-sm font-medium text-text-secondary hover:border-primary-300 hover:text-primary-700 transition-colors whitespace-nowrap flex flex-col items-center sm:block" href="#">
+                                    Decision <span class="text-xs ml-1 font-normal text-slate-400 sm:inline block">/ 決�?</span>
+</a>
+<a class="border-b-2 border-transparent py-4 text-sm font-medium text-text-secondary hover:border-primary-300 hover:text-primary-700 transition-colors whitespace-nowrap flex flex-col items-center sm:block" href="#">
+                                    Postnatal <span class="text-xs ml-1 font-normal text-slate-400 sm:inline block">/ ?��?</span>
+</a>
+<a class="border-b-2 border-transparent py-4 text-sm font-medium text-text-secondary hover:border-primary-300 hover:text-primary-700 transition-colors whitespace-nowrap flex flex-col items-center sm:block" href="#">
+                                    Independence <span class="text-xs ml-1 font-normal text-slate-400 sm:inline block">/ ?��?</span>
+</a>
+</nav>
+</div>
+</div>
+<details class="group bg-surface-light border border-slate-200 rounded-xl overflow-hidden shadow-sm" open="">
+<summary class="flex items-center justify-between p-5 cursor-pointer bg-slate-50 hover:bg-primary-50 transition-colors select-none">
+<div class="flex items-center gap-3">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white text-sm font-bold shadow-sm">1</span>
+<h2 class="text-lg font-bold text-primary-800">
+                                    Category 1: Prenatal Strategy <span class="font-medium text-primary-600 text-base ml-2">/ 第�??�段：產?��???/span>
+</h2>
+</div>
+<span class="material-symbols-outlined text-primary-400 transition-transform duration-200 group-open:rotate-180">expand_more</span>
+</summary>
+<div class="p-0">
+<table class="min-w-full divide-y divide-slate-100">
+<tbody class="divide-y divide-slate-100 bg-white">
+<tr class="hover:bg-primary-50/50 transition-colors">
+<td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm text-slate-500 w-12 align-top">
+<span class="material-symbols-outlined text-[20px] text-primary-400 mt-1">description</span>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-sm font-medium text-text-main align-top">
+<div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+<span>TIC Assessment Form</span>
+<span class="hidden sm:inline text-slate-300">|</span>
+<span class="text-slate-600">?�傷?��?評估�?/span>
+</div>
+</td>
+<td class="py-4 px-3 text-sm text-slate-500 hidden md:table-cell align-top">
+<div class="flex flex-col">
+<span>Initial intake &amp; trauma history</span>
+<span class="text-xs text-slate-400">?�步評估?�創?�史</span>
+</div>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-right text-sm font-medium sm:pr-6 align-top">
+<a class="text-primary hover:text-primary-700 flex items-center justify-end gap-1 font-semibold" href="#">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Download</span> <span class="text-primary-300 mx-1">/</span> <span>下�?</span>
+</a>
+</td>
+</tr>
+<tr class="hover:bg-primary-50/50 transition-colors">
+<td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm text-slate-500 w-12 align-top">
+<span class="material-symbols-outlined text-[20px] text-primary-400 mt-1">description</span>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-sm font-medium text-text-main align-top">
+<div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+<span>Basic Needs Checklist</span>
+<span class="hidden sm:inline text-slate-300">|</span>
+<span class="text-slate-600">?�本?�求檢?�表</span>
+</div>
+</td>
+<td class="py-4 px-3 text-sm text-slate-500 hidden md:table-cell align-top">
+<div class="flex flex-col">
+<span>Health, nutrition &amp; safety check</span>
+<span class="text-xs text-slate-400">?�康?��?養�?安全檢查</span>
+</div>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-right text-sm font-medium sm:pr-6 align-top">
+<a class="text-primary hover:text-primary-700 flex items-center justify-end gap-1 font-semibold" href="#">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Download</span> <span class="text-primary-300 mx-1">/</span> <span>下�?</span>
+</a>
+</td>
+</tr>
+<tr class="hover:bg-primary-50/50 transition-colors">
+<td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm text-slate-500 w-12 align-top">
+<span class="material-symbols-outlined text-[20px] text-primary-400 mt-1">description</span>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-sm font-medium text-text-main align-top">
+<div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+<span>Social Worker Referral Form</span>
+<span class="hidden sm:inline text-slate-300">|</span>
+<span class="text-slate-600">社工轉�???/span>
+</div>
+</td>
+<td class="py-4 px-3 text-sm text-slate-500 hidden md:table-cell align-top">
+<div class="flex flex-col">
+<span>Cross-agency collaboration</span>
+<span class="text-xs text-slate-400">跨�?構�?�?/span>
+</div>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-right text-sm font-medium sm:pr-6 align-top">
+<a class="text-primary hover:text-primary-700 flex items-center justify-end gap-1 font-semibold" href="#">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Download</span> <span class="text-primary-300 mx-1">/</span> <span>下�?</span>
+</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</details>
+<details class="group bg-surface-light border border-slate-200 rounded-xl overflow-hidden shadow-sm" open="">
+<summary class="flex items-center justify-between p-5 cursor-pointer bg-slate-50 hover:bg-primary-50 transition-colors select-none">
+<div class="flex items-center gap-3">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white text-sm font-bold shadow-sm">2</span>
+<h2 class="text-lg font-bold text-primary-800">
+                                    Category 2: Decision &amp; Preparation <span class="font-medium text-primary-600 text-base ml-2">/ 第�??�段：決策�?準�?</span>
+</h2>
+</div>
+<span class="material-symbols-outlined text-primary-400 transition-transform duration-200 group-open:rotate-180">expand_more</span>
+</summary>
+<div class="p-0">
+<table class="min-w-full divide-y divide-slate-100">
+<tbody class="divide-y divide-slate-100 bg-white">
+<tr class="hover:bg-primary-50/50 transition-colors">
+<td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm text-slate-500 w-12 align-top">
+<span class="material-symbols-outlined text-[20px] text-primary-400 mt-1">description</span>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-sm font-medium text-text-main align-top">
+<div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+<span>Adoption vs Parenting Worksheet</span>
+<span class="hidden sm:inline text-slate-300">|</span>
+<span class="text-slate-600">?��??��?養決策表</span>
+</div>
+</td>
+<td class="py-4 px-3 text-sm text-slate-500 hidden md:table-cell align-top">
+<div class="flex flex-col">
+<span>Decision making matrix</span>
+<span class="text-xs text-slate-400">決�??�陣</span>
+</div>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-right text-sm font-medium sm:pr-6 align-top">
+<a class="text-primary hover:text-primary-700 flex items-center justify-end gap-1 font-semibold" href="#">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Download</span> <span class="text-primary-300 mx-1">/</span> <span>下�?</span>
+</a>
+</td>
+</tr>
+<tr class="hover:bg-primary-50/50 transition-colors">
+<td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm text-slate-500 w-12 align-top">
+<span class="material-symbols-outlined text-[20px] text-primary-400 mt-1">description</span>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-sm font-medium text-text-main align-top">
+<div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+<span>Legal Rights Consent Form</span>
+<span class="hidden sm:inline text-slate-300">|</span>
+<span class="text-slate-600">法�?權�??��???/span>
+</div>
+</td>
+<td class="py-4 px-3 text-sm text-slate-500 hidden md:table-cell align-top">
+<div class="flex flex-col">
+<span>Guardian consent &amp; legal info</span>
+<span class="text-xs text-slate-400">??��人�??��?法�?資�?</span>
+</div>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-right text-sm font-medium sm:pr-6 align-top">
+<a class="text-primary hover:text-primary-700 flex items-center justify-end gap-1 font-semibold" href="#">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Download</span> <span class="text-primary-300 mx-1">/</span> <span>下�?</span>
+</a>
+</td>
+</tr>
+<tr class="hover:bg-primary-50/50 transition-colors">
+<td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm text-slate-500 w-12 align-top">
+<span class="material-symbols-outlined text-[20px] text-primary-400 mt-1">description</span>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-sm font-medium text-text-main align-top">
+<div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+<span>Financial Aid Application</span>
+<span class="hidden sm:inline text-slate-300">|</span>
+<span class="text-slate-600">經�?補助?��?�?/span>
+</div>
+</td>
+<td class="py-4 px-3 text-sm text-slate-500 hidden md:table-cell align-top">
+<div class="flex flex-col">
+<span>Government &amp; NGO subsidies</span>
+<span class="text-xs text-slate-400">?��??��??��?組�?補助</span>
+</div>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-right text-sm font-medium sm:pr-6 align-top">
+<a class="text-primary hover:text-primary-700 flex items-center justify-end gap-1 font-semibold" href="#">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Download</span> <span class="text-primary-300 mx-1">/</span> <span>下�?</span>
+</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</details>
+<details class="group bg-surface-light border border-slate-200 rounded-xl overflow-hidden shadow-sm" open="">
+<summary class="flex items-center justify-between p-5 cursor-pointer bg-slate-50 hover:bg-primary-50 transition-colors select-none">
+<div class="flex items-center gap-3">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white text-sm font-bold shadow-sm">3</span>
+<h2 class="text-lg font-bold text-primary-800">
+                                    Category 3: Postnatal &amp; Co-living <span class="font-medium text-primary-600 text-base ml-2">/ 第�??�段：產後�??��?</span>
+</h2>
+</div>
+<span class="material-symbols-outlined text-primary-400 transition-transform duration-200 group-open:rotate-180">expand_more</span>
+</summary>
+<div class="p-0">
+<table class="min-w-full divide-y divide-slate-100">
+<tbody class="divide-y divide-slate-100 bg-white">
+<tr class="hover:bg-primary-50/50 transition-colors">
+<td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm text-slate-500 w-12 align-top">
+<span class="material-symbols-outlined text-[20px] text-primary-400 mt-1">description</span>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-sm font-medium text-text-main align-top">
+<div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+<span>Co-living Agreement</span>
+<span class="hidden sm:inline text-slate-300">|</span>
+<span class="text-slate-600">?��??�活?��?</span>
+</div>
+</td>
+<td class="py-4 px-3 text-sm text-slate-500 hidden md:table-cell align-top">
+<div class="flex flex-col">
+<span>Shared space rules &amp; responsibilities</span>
+<span class="text-xs text-slate-400">?�享空�?規�??�責�?/span>
+</div>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-right text-sm font-medium sm:pr-6 align-top">
+<a class="text-primary hover:text-primary-700 flex items-center justify-end gap-1 font-semibold" href="#">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Download</span> <span class="text-primary-300 mx-1">/</span> <span>下�?</span>
+</a>
+</td>
+</tr>
+<tr class="hover:bg-primary-50/50 transition-colors">
+<td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm text-slate-500 w-12 align-top">
+<span class="material-symbols-outlined text-[20px] text-primary-400 mt-1">description</span>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-sm font-medium text-text-main align-top">
+<div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+<span>Baby Development Log</span>
+<span class="hidden sm:inline text-slate-300">|</span>
+<span class="text-slate-600">寶寶?�長紀?�表</span>
+</div>
+</td>
+<td class="py-4 px-3 text-sm text-slate-500 hidden md:table-cell align-top">
+<div class="flex flex-col">
+<span>Health milestones tracker</span>
+<span class="text-xs text-slate-400">?�康?��?碑追�?/span>
+</div>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-right text-sm font-medium sm:pr-6 align-top">
+<a class="text-primary hover:text-primary-700 flex items-center justify-end gap-1 font-semibold" href="#">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Download</span> <span class="text-primary-300 mx-1">/</span> <span>下�?</span>
+</a>
+</td>
+</tr>
+<tr class="hover:bg-primary-50/50 transition-colors">
+<td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm text-slate-500 w-12 align-top">
+<span class="material-symbols-outlined text-[20px] text-primary-400 mt-1">description</span>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-sm font-medium text-text-main align-top">
+<div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+<span>Psychological Counseling Log</span>
+<span class="hidden sm:inline text-slate-300">|</span>
+<span class="text-slate-600">心�?諮�?紀??/span>
+</div>
+</td>
+<td class="py-4 px-3 text-sm text-slate-500 hidden md:table-cell align-top">
+<div class="flex flex-col">
+<span>Confidential session notes</span>
+<span class="text-xs text-slate-400">機�?諮�?筆�?</span>
+</div>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-right text-sm font-medium sm:pr-6 align-top">
+<a class="text-primary hover:text-primary-700 flex items-center justify-end gap-1 font-semibold" href="#">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Download</span> <span class="text-primary-300 mx-1">/</span> <span>下�?</span>
+</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</details>
+<details class="group bg-surface-light border border-slate-200 rounded-xl overflow-hidden shadow-sm" open="">
+<summary class="flex items-center justify-between p-5 cursor-pointer bg-slate-50 hover:bg-primary-50 transition-colors select-none">
+<div class="flex items-center gap-3">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white text-sm font-bold shadow-sm">4</span>
+<h2 class="text-lg font-bold text-primary-800">
+                                    Category 4: Cafe &amp; Independence <span class="font-medium text-primary-600 text-base ml-2">/ 第�??�段：�??�廳實�??�獨�?/span>
+</h2>
+</div>
+<span class="material-symbols-outlined text-primary-400 transition-transform duration-200 group-open:rotate-180">expand_more</span>
+</summary>
+<div class="p-0">
+<table class="min-w-full divide-y divide-slate-100">
+<tbody class="divide-y divide-slate-100 bg-white">
+<tr class="hover:bg-primary-50/50 transition-colors">
+<td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm text-slate-500 w-12 align-top">
+<span class="material-symbols-outlined text-[20px] text-primary-400 mt-1">description</span>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-sm font-medium text-text-main align-top">
+<div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+<span>Vocational Training Plan</span>
+<span class="hidden sm:inline text-slate-300">|</span>
+<span class="text-slate-600">?�業?��?計畫??/span>
+</div>
+</td>
+<td class="py-4 px-3 text-sm text-slate-500 hidden md:table-cell align-top">
+<div class="flex flex-col">
+<span>Skill building &amp; goals</span>
+<span class="text-xs text-slate-400">?�?�建立�??��?</span>
+</div>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-right text-sm font-medium sm:pr-6 align-top">
+<a class="text-primary hover:text-primary-700 flex items-center justify-end gap-1 font-semibold" href="#">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Download</span> <span class="text-primary-300 mx-1">/</span> <span>下�?</span>
+</a>
+</td>
+</tr>
+<tr class="hover:bg-primary-50/50 transition-colors">
+<td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm text-slate-500 w-12 align-top">
+<span class="material-symbols-outlined text-[20px] text-primary-400 mt-1">description</span>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-sm font-medium text-text-main align-top">
+<div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+<span>Financial Independence Plan</span>
+<span class="hidden sm:inline text-slate-300">|</span>
+<span class="text-slate-600">財�??��?計畫</span>
+</div>
+</td>
+<td class="py-4 px-3 text-sm text-slate-500 hidden md:table-cell align-top">
+<div class="flex flex-col">
+<span>Budgeting &amp; savings roadmap</span>
+<span class="text-xs text-slate-400">?��??�儲?��???/span>
+</div>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-right text-sm font-medium sm:pr-6 align-top">
+<a class="text-primary hover:text-primary-700 flex items-center justify-end gap-1 font-semibold" href="#">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Download</span> <span class="text-primary-300 mx-1">/</span> <span>下�?</span>
+</a>
+</td>
+</tr>
+<tr class="hover:bg-primary-50/50 transition-colors">
+<td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm text-slate-500 w-12 align-top">
+<span class="material-symbols-outlined text-[20px] text-primary-400 mt-1">description</span>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-sm font-medium text-text-main align-top">
+<div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+<span>Exit Survey</span>
+<span class="hidden sm:inline text-slate-300">|</span>
+<span class="text-slate-600">結�?調查�?/span>
+</div>
+</td>
+<td class="py-4 px-3 text-sm text-slate-500 hidden md:table-cell align-top">
+<div class="flex flex-col">
+<span>Program feedback &amp; future contact</span>
+<span class="text-xs text-slate-400">計畫?��??�未來聯�?/span>
+</div>
+</td>
+<td class="whitespace-nowrap py-4 px-3 text-right text-sm font-medium sm:pr-6 align-top">
+<a class="text-primary hover:text-primary-700 flex items-center justify-end gap-1 font-semibold" href="#">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Download</span> <span class="text-primary-300 mx-1">/</span> <span>下�?</span>
+</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</details>
+<div class="rounded-xl border border-green-100 bg-green-50/50 p-4 flex items-start gap-3 mt-4">
+<span class="material-symbols-outlined text-primary-600 mt-0.5">info</span>
+<div>
+<h3 class="text-sm font-bold text-text-main mb-1">
+                                Zero PII Reminder / ?�個�??��?
+                            </h3>
+<p class="text-sm text-text-secondary">
+                                Please ensure no Personally Identifiable Information (PII) is entered into these templates before sharing publicly or storing on unsecure servers. <a class="text-primary-600 font-medium hover:underline" href="#">Learn more about data privacy protocols.</a>
+</p>
+<p class="text-sm text-text-secondary mt-1">
+                                ?�公?��?享�??��??��?安全?�伺?�器之�?，�?確�??��?範本中未輸入任�??�人識別資�? (PII)??<a class="text-primary-600 font-medium hover:underline" href="#">了解?��??��??��??�議?�更多�?訊�?/a>
+</p>
+</div>
+</div>
+<div class="flex items-center justify-between border-t border-slate-200 pt-6 pb-20">
+<p class="text-sm text-text-secondary">
+                            Showing all current resources. <span class="text-slate-400">/ 顯示?�?�目?��?源�?/span>
+</p>
+<button class="flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all shadow-sm">
+<span>Bulk Download</span>
+<span class="opacity-80 mx-1">/</span>
+<span>?��?下�?</span>
+</button>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>
+

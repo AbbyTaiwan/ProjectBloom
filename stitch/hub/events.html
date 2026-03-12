@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>事項與場地管理 / Events & Venue Management</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --bg: #F4F6F4;
+            --card: #FFFFFF;
+            --primary: #4A8C5C;
+            --primary-dark: #3A7A4C;
+            --primary-light: #E8F5E9;
+            --pink: #F8BBD0;
+            --pink-bg: #FFF0F5;
+            --pink-text: #C2185B;
+            --green: #A5D6A7;
+            --green-bg: #F0FFF0;
+            --green-text: #2E7D32;
+            --blue: #81D4FA;
+            --blue-bg: #F0F8FF;
+            --blue-text: #0277BD;
+            --amber: #FFD54F;
+            --amber-bg: #FFFDE7;
+            --amber-text: #F57F17;
+            --red-bg: #FFF5F5;
+            --red-text: #C62828;
+            --text-main: #1A2E1A;
+            --text-sub: #5A7A5A;
+            --text-muted: #8FA88F;
+            --border: #E0E8E0;
+            --border-light: #EEF2EE;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            --shadow-hover: 0 8px 28px rgba(0, 0, 0, 0.08);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --font: 'Inter', 'Noto Sans TC', -apple-system, sans-serif;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5
+        }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 32px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-light)
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .header-logo {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), #66BB6A);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none
+        }
+
+        .header-logo .material-icons-outlined {
+            font-size: 22px;
+            color: white
+        }
+
+        .header-title {
+            font-size: 16px;
+            font-weight: 700
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: white;
+            font-family: var(--font);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none
+        }
+
+        .back-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary)
+        }
+
+        .back-btn .material-icons-outlined {
+            font-size: 18px
+        }
+
+        /* Tabs */
+        .page-tabs {
+            display: flex;
+            gap: 4px;
+            padding: 12px 32px;
+            background: white;
+            border-bottom: 1px solid var(--border-light)
+        }
+
+        .page-tab {
+            padding: 10px 20px;
+            border-radius: 8px 8px 0 0;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: var(--font);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 2px solid transparent
+        }
+
+        .page-tab:hover {
+            color: var(--primary);
+            background: var(--primary-light)
+        }
+
+        .page-tab.active {
+            color: var(--primary);
+            font-weight: 600;
+            border-bottom-color: var(--primary);
+            background: var(--primary-light)
+        }
+
+        .page-tab .material-icons-outlined {
+            font-size: 18px
+        }
+
+        /* Content */
+        .content {
+            padding: 28px 32px 60px;
+            max-width: 1400px;
+            margin: 0 auto
+        }
+
+        .tab-panel {
+            display: none
+        }
+
+        .tab-panel.active {
+            display: block
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .section-title .material-icons-outlined {
+            font-size: 22px;
+            color: var(--primary)
+        }
+
+        /* ===== EVENTS SPLIT ===== */
+        .events-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px
+        }
+
+        @media(max-width:1024px) {
+            .events-split {
+                grid-template-columns: 1fr
+            }
+        }
+
+        /* Event list */
+        .event-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 4px
+        }
+
+        .event-item-card {
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            transition: all 0.2s;
+            position: relative
+        }
+
+        .event-item-card:hover {
+            box-shadow: var(--shadow-hover)
+        }
+
+        .event-item-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .event-item-icon.pink {
+            background: var(--pink-bg)
+        }
+
+        .event-item-icon.green {
+            background: var(--green-bg)
+        }
+
+        .event-item-icon.blue {
+            background: var(--blue-bg)
+        }
+
+        .event-item-icon.amber {
+            background: var(--amber-bg)
+        }
+
+        .event-item-icon .material-icons-outlined {
+            font-size: 18px
+        }
+
+        .event-item-icon.pink .material-icons-outlined {
+            color: var(--pink-text)
+        }
+
+        .event-item-icon.green .material-icons-outlined {
+            color: var(--green-text)
+        }
+
+        .event-item-icon.blue .material-icons-outlined {
+            color: var(--blue-text)
+        }
+
+        .event-item-icon.amber .material-icons-outlined {
+            color: var(--amber-text)
+        }
+
+        .event-item-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 2px
+        }
+
+        .event-item-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 3px
+        }
+
+        .event-item-meta .material-icons-outlined {
+            font-size: 13px
+        }
+
+        .event-badge {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 99px;
+            margin-top: 4px
+        }
+
+        .event-badge.upcoming {
+            background: var(--blue-bg);
+            color: var(--blue-text)
+        }
+
+        .event-badge.today {
+            background: var(--green-bg);
+            color: var(--green-text)
+        }
+
+        .event-delete-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.2s
+        }
+
+        .event-item-card:hover .event-delete-btn {
+            opacity: 0.5
+        }
+
+        .event-delete-btn:hover {
+            opacity: 1 !important;
+            background: var(--red-bg)
+        }
+
+        .event-delete-btn .material-icons-outlined {
+            font-size: 16px;
+            color: var(--red-text)
+        }
+
+        .add-event-btn {
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-sm);
+            background: transparent;
+            font-family: var(--font);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 10px
+        }
+
+        .add-event-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light)
+        }
+
+        /* Calendar */
+        .cal-section {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow);
+            margin-bottom: 16px
+        }
+
+        .cal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px
+        }
+
+        .cal-title {
+            font-size: 15px;
+            font-weight: 700
+        }
+
+        .cal-nav {
+            display: flex;
+            gap: 4px
+        }
+
+        .cal-nav-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s
+        }
+
+        .cal-nav-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary)
+        }
+
+        .cal-nav-btn .material-icons-outlined {
+            font-size: 16px;
+            color: var(--text-sub)
+        }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            text-align: center
+        }
+
+        .cal-dow {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            padding: 4px 0
+        }
+
+        .cal-day {
+            font-size: 12px;
+            padding: 6px 2px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+            font-weight: 500
+        }
+
+        .cal-day:hover {
+            background: var(--primary-light)
+        }
+
+        .cal-day.today {
+            background: var(--primary);
+            color: white;
+            font-weight: 700;
+            border-radius: 50%
+        }
+
+        .cal-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--primary)
+        }
+
+        .cal-day.today.has-event::after {
+            background: white
+        }
+
+        .cal-day.other-month {
+            color: var(--border)
+        }
+
+        .cal-dual {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px
+        }
+
+        @media(max-width:1200px) {
+            .cal-dual {
+                grid-template-columns: 1fr
+            }
+        }
+
+        /* Year calendar */
+        .year-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px
+        }
+
+        .year-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px
+        }
+
+        .year-month {
+            text-align: center;
+            padding: 8px 4px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent
+        }
+
+        .year-month:hover {
+            background: var(--primary-light);
+            border-color: var(--primary)
+        }
+
+        .year-month.current {
+            background: var(--primary-light);
+            font-weight: 700;
+            border-color: var(--primary)
+        }
+
+        .year-month-name {
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 2px
+        }
+
+        .year-month-dots {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+            margin-top: 2px
+        }
+
+        .year-month-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--primary)
+        }
+
+        .year-month-count {
+            font-size: 9px;
+            color: var(--text-muted);
+            margin-top: 2px
+        }
+
+        /* ===== VENUE ===== */
+        .venue-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px
+        }
+
+        .classroom-tabs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap
+        }
+
+        .classroom-tab {
+            padding: 10px 18px;
+            border-radius: 99px;
+            font-size: 13px;
+            font-weight: 500;
+            border: 1.5px solid var(--border);
+            background: white;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font);
+            display: flex;
+            align-items: center;
+            gap: 6px
+        }
+
+        .classroom-tab:hover {
+            border-color: var(--primary);
+            color: var(--primary)
+        }
+
+        .classroom-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary)
+        }
+
+        .classroom-tab .material-icons-outlined {
+            font-size: 16px
+        }
+
+        .date-nav {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .date-nav-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s
+        }
+
+        .date-nav-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary)
+        }
+
+        .date-nav-btn .material-icons-outlined {
+            font-size: 20px;
+            color: var(--text-sub)
+        }
+
+        .date-label {
+            font-size: 14px;
+            font-weight: 600;
+            min-width: 200px;
+            text-align: center
+        }
+
+        .timeline-container {
+            background: white;
+            border-radius: var(--radius);
+            padding: 24px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow);
+            overflow-x: auto
+        }
+
+        .timeline-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px
+        }
+
+        .timeline-room-name {
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .timeline-room-name .material-icons-outlined {
+            font-size: 20px;
+            color: var(--primary)
+        }
+
+        .room-status-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 99px
+        }
+
+        .room-status-badge.available {
+            background: var(--green-bg);
+            color: var(--green-text)
+        }
+
+        .room-status-badge.partial {
+            background: var(--amber-bg);
+            color: var(--amber-text)
+        }
+
+        .room-status-badge.full {
+            background: var(--red-bg);
+            color: var(--red-text)
+        }
+
+        .timeline-grid {
+            position: relative;
+            min-width: 700px
+        }
+
+        .timeline-hours {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 8px;
+            margin-bottom: 4px
+        }
+
+        .timeline-hour {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+            font-weight: 500
+        }
+
+        .timeline-bar {
+            height: 48px;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 2px;
+            margin-bottom: 4px;
+            position: relative
+        }
+
+        .timeline-slot {
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            position: relative
+        }
+
+        .timeline-slot.free {
+            background: var(--green-bg);
+            border: 1px solid #C8E6C9;
+            color: var(--green-text)
+        }
+
+        .timeline-slot.free:hover {
+            background: #B9F6B0;
+            transform: scaleY(1.1)
+        }
+
+        .timeline-slot.booked {
+            background: linear-gradient(135deg, #EF9A9A, #FFAB91);
+            border: 1px solid #FFCDD2;
+            color: white;
+            cursor: not-allowed
+        }
+
+        .timeline-slot.booked .slot-info {
+            font-size: 9px;
+            line-height: 1.3;
+            text-align: center
+        }
+
+        .timeline-slot.lunch {
+            background: repeating-linear-gradient(45deg, var(--border-light), var(--border-light) 4px, white 4px, white 8px);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            cursor: default
+        }
+
+        .timeline-legend {
+            display: flex;
+            gap: 20px;
+            margin-top: 16px;
+            font-size: 12px;
+            color: var(--text-muted)
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 4px
+        }
+
+        .legend-dot.free {
+            background: var(--green-bg);
+            border: 1px solid #C8E6C9
+        }
+
+        .legend-dot.booked {
+            background: #EF9A9A;
+            border: 1px solid #FFCDD2
+        }
+
+        .legend-dot.lunch {
+            background: repeating-linear-gradient(45deg, var(--border-light), var(--border-light) 2px, white 2px, white 4px);
+            border: 1px solid var(--border)
+        }
+
+        .book-btn {
+            margin-top: 16px;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, var(--primary), #66BB6A);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            font-family: var(--font);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 16px rgba(74, 140, 92, 0.3)
+        }
+
+        .book-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(74, 140, 92, 0.4)
+        }
+
+        .book-btn .material-icons-outlined {
+            font-size: 18px
+        }
+
+        /* Audit */
+        .audit-controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center
+        }
+
+        .audit-filter {
+            padding: 9px 16px;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--border);
+            background: white;
+            font-family: var(--font);
+            font-size: 13px;
+            color: var(--text-main);
+            outline: none;
+            cursor: pointer;
+            min-width: 160px
+        }
+
+        .audit-filter:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 140, 92, 0.1)
+        }
+
+        .audit-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 0;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow);
+            overflow: hidden
+        }
+
+        .audit-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .audit-table thead {
+            background: var(--primary-light)
+        }
+
+        .audit-table th {
+            text-align: left;
+            padding: 14px 20px;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--primary-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap
+        }
+
+        .audit-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-sub);
+            vertical-align: top
+        }
+
+        .audit-table tr:last-child td {
+            border-bottom: none
+        }
+
+        .audit-table tr:hover td {
+            background: #FAFCFA
+        }
+
+        .audit-actor {
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: nowrap
+        }
+
+        .audit-action {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 99px;
+            white-space: nowrap
+        }
+
+        .audit-action.add {
+            background: var(--green-bg);
+            color: var(--green-text)
+        }
+
+        .audit-action.edit {
+            background: var(--blue-bg);
+            color: var(--blue-text)
+        }
+
+        .audit-action.delete {
+            background: var(--red-bg);
+            color: var(--red-text)
+        }
+
+        .audit-action.book {
+            background: var(--amber-bg);
+            color: var(--amber-text)
+        }
+
+        .audit-timestamp {
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(6px);
+            z-index: 300;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px
+        }
+
+        .modal-overlay.active {
+            display: flex
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 440px;
+            width: 100%;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2)
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .modal-title .material-icons-outlined {
+            color: var(--primary)
+        }
+
+        .modal-group {
+            margin-bottom: 16px
+        }
+
+        .modal-label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: block;
+            color: var(--text-main)
+        }
+
+        .modal-label span {
+            font-weight: 400;
+            color: var(--text-muted)
+        }
+
+        .modal-input,
+        .modal-select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: var(--font);
+            font-size: 14px;
+            color: var(--text-main);
+            outline: none;
+            background: #FAFCFA
+        }
+
+        .modal-input:focus,
+        .modal-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 140, 92, 0.1)
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            border: none;
+            font-family: var(--font);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s
+        }
+
+        .modal-btn.cancel {
+            background: var(--border-light);
+            color: var(--text-sub)
+        }
+
+        .modal-btn.cancel:hover {
+            background: var(--border)
+        }
+
+        .modal-btn.confirm {
+            background: var(--primary);
+            color: white
+        }
+
+        .modal-btn.confirm:hover {
+            background: var(--primary-dark)
+        }
+
+        .conflict-warning {
+            background: var(--red-bg);
+            border: 1px solid #FFCDD2;
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--red-text);
+            display: none;
+            align-items: center;
+            gap: 8px
+        }
+
+        .conflict-warning.show {
+            display: flex
+        }
+
+        .conflict-warning .material-icons-outlined {
+            font-size: 20px
+        }
+
+        .page-footer {
+            text-align: center;
+            padding: 40px 20px;
+            font-size: 12px;
+            color: var(--text-muted)
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-left">
+            <a href="code.html" class="header-logo"><span class="material-icons-outlined">eco</span></a>
+            <span class="header-title">事項與場地管理 / Events & Venue Management</span>
+        </div>
+        <div class="header-right">
+            <a href="code.html" class="back-btn">
+                <span class="material-icons-outlined">arrow_back</span>
+                返回森林 / Back to Forest
+            </a>
+        </div>
+    </header>
+
+    <div class="page-tabs">
+        <button class="page-tab active" onclick="switchTab('events')">
+            <span class="material-icons-outlined">event_note</span>重要事項 / Events
+        </button>
+        <button class="page-tab" onclick="switchTab('venue')">
+            <span class="material-icons-outlined">meeting_room</span>場地預約 / Venue Booking
+        </button>
+        <button class="page-tab" onclick="switchTab('audit')">
+            <span class="material-icons-outlined">history</span>透明化日誌 / Audit Logs
+        </button>
+    </div>
+
+    <div class="content">
+        <!-- ===== EVENTS TAB ===== -->
+        <div class="tab-panel active" id="panel-events">
+            <div class="events-split">
+                <!-- LEFT: Events Board -->
+                <div>
+                    <div class="section-title">
+                        <span class="material-icons-outlined">event_note</span>
+                        重要事項看板 / Events Board
+                    </div>
+                    <div class="event-list" id="eventList"></div>
+                    <button class="add-event-btn" onclick="openEventModal()">
+                        <span class="material-icons-outlined">add_circle</span>
+                        新增事項 / Add Event
+                    </button>
+                </div>
+                <!-- RIGHT: Calendars -->
+                <div>
+                    <div class="section-title">
+                        <span class="material-icons-outlined">calendar_month</span>
+                        行事曆 / Calendar
+                    </div>
+                    <div class="cal-dual">
+                        <div class="cal-section" id="calMonth1"></div>
+                        <div class="cal-section" id="calMonth2"></div>
+                    </div>
+                    <div class="cal-section" style="margin-top:0">
+                        <div class="year-header">
+                            <button class="cal-nav-btn" onclick="changeYear(-1)"><span
+                                    class="material-icons-outlined">chevron_left</span></button>
+                            <span class="cal-title" id="yearLabel"></span>
+                            <button class="cal-nav-btn" onclick="changeYear(1)"><span
+                                    class="material-icons-outlined">chevron_right</span></button>
+                        </div>
+                        <div class="year-grid" id="yearGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== VENUE TAB ===== -->
+        <div class="tab-panel" id="panel-venue">
+            <div class="section-title"><span class="material-icons-outlined">meeting_room</span>場地預約系統 / Venue Booking
+                System</div>
+            <div class="venue-controls">
+                <div class="classroom-tabs">
+                    <button class="classroom-tab active" onclick="selectClassroom(this,1)"><span
+                            class="material-icons-outlined">door_front</span> 教室 1</button>
+                    <button class="classroom-tab" onclick="selectClassroom(this,2)"><span
+                            class="material-icons-outlined">door_front</span> 教室 2</button>
+                    <button class="classroom-tab" onclick="selectClassroom(this,3)"><span
+                            class="material-icons-outlined">door_front</span> 教室 3</button>
+                    <button class="classroom-tab" onclick="selectClassroom(this,4)"><span
+                            class="material-icons-outlined">door_front</span> 教室 4</button>
+                    <button class="classroom-tab" onclick="selectClassroom(this,5)"><span
+                            class="material-icons-outlined">door_front</span> 教室 5</button>
+                </div>
+                <div class="date-nav">
+                    <button class="date-nav-btn" onclick="changeDate(-1)"><span
+                            class="material-icons-outlined">chevron_left</span></button>
+                    <span class="date-label" id="dateLabel"></span>
+                    <button class="date-nav-btn" onclick="changeDate(1)"><span
+                            class="material-icons-outlined">chevron_right</span></button>
+                </div>
+            </div>
+            <div class="timeline-container" id="timelineContainer"></div>
+            <button class="book-btn" onclick="openBookingModal()"><span
+                    class="material-icons-outlined">add_circle</span>新增預約 / New Booking</button>
+        </div>
+
+        <!-- ===== AUDIT TAB ===== -->
+        <div class="tab-panel" id="panel-audit">
+            <div class="section-title"><span class="material-icons-outlined">history</span>透明化日誌 / Audit Logs</div>
+            <div class="audit-controls">
+                <input type="date" class="audit-filter" id="auditDateFilter" onchange="filterAuditLogs()" />
+                <select class="audit-filter" id="auditActorFilter" onchange="filterAuditLogs()">
+                    <option value="">所有操作者 / All Actors</option>
+                    <option value="SW-A">SW-A</option>
+                    <option value="SW-B">SW-B</option>
+                    <option value="Coach-A">Coach-A</option>
+                    <option value="Admin">Admin</option>
+                </select>
+                <select class="audit-filter" id="auditActionFilter" onchange="filterAuditLogs()">
+                    <option value="">所有行動 / All Actions</option>
+                    <option value="新增場地">新增場地</option>
+                    <option value="修改事項">修改事項</option>
+                    <option value="更新個案">更新個案</option>
+                    <option value="封存個案">封存個案</option>
+                    <option value="新增事項">新增事項</option>
+                    <option value="刪除事項">刪除事項</option>
+                </select>
+            </div>
+            <div class="audit-card">
+                <table class="audit-table">
+                    <thead>
+                        <tr>
+                            <th>時間戳記 / Timestamp</th>
+                            <th>操作者 / Actor</th>
+                            <th>行動 / Action</th>
+                            <th>內容描述 / Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auditTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div class="modal-overlay" id="bookingModal">
+        <div class="modal">
+            <div class="modal-title"><span class="material-icons-outlined">event_available</span>新增預約 / New Booking
+            </div>
+            <div class="modal-group"><label class="modal-label">教室 <span>/ Classroom</span></label>
+                <select class="modal-select" id="modalRoom">
+                    <option value="1">教室 1</option>
+                    <option value="2">教室 2</option>
+                    <option value="3">教室 3</option>
+                    <option value="4">教室 4</option>
+                    <option value="5">教室 5</option>
+                </select>
+            </div>
+            <div class="modal-group"><label class="modal-label">日期 <span>/ Date</span></label><input type="date"
+                    class="modal-input" id="modalDate" /></div>
+            <div class="modal-group"><label class="modal-label">開始 <span>/ Start</span></label>
+                <select class="modal-select" id="modalStart">
+                    <option value="8">08:00</option>
+                    <option value="9">09:00</option>
+                    <option value="10">10:00</option>
+                    <option value="11">11:00</option>
+                    <option value="13">13:00</option>
+                    <option value="14">14:00</option>
+                    <option value="15">15:00</option>
+                    <option value="16">16:00</option>
+                    <option value="17">17:00</option>
+                    <option value="18">18:00</option>
+                    <option value="19">19:00</option>
+                </select>
+            </div>
+            <div class="modal-group"><label class="modal-label">結束 <span>/ End</span></label>
+                <select class="modal-select" id="modalEnd">
+                    <option value="9">09:00</option>
+                    <option value="10">10:00</option>
+                    <option value="11">11:00</option>
+                    <option value="12">12:00</option>
+                    <option value="14">14:00</option>
+                    <option value="15">15:00</option>
+                    <option value="16">16:00</option>
+                    <option value="17">17:00</option>
+                    <option value="18">18:00</option>
+                    <option value="19">19:00</option>
+                    <option value="20">20:00</option>
+                </select>
+            </div>
+            <div class="modal-group"><label class="modal-label">用途 <span>/ Purpose</span></label><input type="text"
+                    class="modal-input" id="modalPurpose" placeholder="例：個案研討 / e.g. Case Review" /></div>
+            <div class="conflict-warning" id="conflictWarning"><span
+                    class="material-icons-outlined">warning</span><span>時段衝突！/ Time conflict!</span></div>
+            <div class="modal-actions"><button class="modal-btn cancel" onclick="closeBookingModal()">取消</button><button
+                    class="modal-btn confirm" onclick="confirmBooking()">確認預約</button></div>
+        </div>
+    </div>
+
+    <!-- Event Modal -->
+    <div class="modal-overlay" id="eventModal">
+        <div class="modal">
+            <div class="modal-title"><span class="material-icons-outlined">event</span>新增事項 / Add Event</div>
+            <div class="modal-group"><label class="modal-label">標題 <span>/ Title</span></label><input type="text"
+                    class="modal-input" id="evTitle" placeholder="督導會議 / Supervisor Meeting" /></div>
+            <div class="modal-group"><label class="modal-label">日期 <span>/ Date</span></label><input type="date"
+                    class="modal-input" id="evDate" /></div>
+            <div class="modal-group"><label class="modal-label">時間 <span>/ Time</span></label><input type="time"
+                    class="modal-input" id="evTime" value="10:00" /></div>
+            <div class="modal-group"><label class="modal-label">地點 <span>/ Location</span></label>
+                <select class="modal-select" id="evLocation">
+                    <option>教室 1 / Classroom 1</option>
+                    <option>教室 2 / Classroom 2</option>
+                    <option>教室 3 / Classroom 3</option>
+                    <option>教室 4 / Classroom 4</option>
+                    <option>教室 5 / Classroom 5</option>
+                </select>
+            </div>
+            <div class="modal-group"><label class="modal-label">說明 <span>/ Description</span></label><input type="text"
+                    class="modal-input" id="evDesc" placeholder="簡要說明 / Brief description" /></div>
+            <div class="modal-group"><label class="modal-label">類別 <span>/ Category</span></label>
+                <select class="modal-select" id="evColor">
+                    <option value="amber">一般 / General</option>
+                    <option value="blue">個案 / Case</option>
+                    <option value="pink">活動 / Activity</option>
+                    <option value="green">典禮 / Ceremony</option>
+                </select>
+            </div>
+            <div class="modal-actions"><button class="modal-btn cancel" onclick="closeEventModal()">取消</button><button
+                    class="modal-btn confirm" onclick="confirmAddEvent()">新增 / Add</button></div>
+        </div>
+    </div>
+
+    <footer class="page-footer">© 2026 生命種子計畫 Seed of Life Project. All rights reserved.</footer>
+
+    <script>
+        // ===== STATE =====
+        const today = new Date();
+        const todayStr = today.toISOString().slice(0, 10);
+        let currentClassroom = 1;
+        let currentDate = new Date();
+        let calYear = today.getFullYear();
+
+        // ===== EVENTS DATA =====
+        const EVK = 'sol_events';
+        function getEvents() { return JSON.parse(localStorage.getItem(EVK) || '[]'); }
+        function saveEvents(e) { localStorage.setItem(EVK, JSON.stringify(e)); }
+
+        if (getEvents().length === 0) {
+            saveEvents([
+                { id: 1, title: 'Meeting with Supervisors / 督導會議', date: todayStr, time: '10:00', location: '教室 1 / Classroom 1', desc: '月度團隊督導會議。/ Monthly supervision.', color: 'amber', icon: 'groups' },
+                { id: 2, title: 'Case Review #1024 / 個案研討', date: todayStr, time: '14:00', location: '教室 3 / Classroom 3', desc: '討論 Case #1024 進展。/ Discuss Case #1024.', color: 'blue', icon: 'assignment' },
+                { id: 3, title: 'Community Event / 社區活動', date: getDateStr(1), time: '09:00', location: '教室 5 / Classroom 5', desc: '社區親子互動。/ Family interaction.', color: 'pink', icon: 'celebration' },
+                { id: 4, title: '結案典禮 / Graduation Ceremony', date: '2026-03-15', time: '15:00', location: '教室 5 / Classroom 5', desc: '本季結案慶祝。/ Quarterly graduation.', color: 'green', icon: 'park' },
+                { id: 5, title: '家長座談 / Parent Forum', date: '2026-03-05', time: '14:00', location: '教室 2 / Classroom 2', desc: '半年度家長座談。/ Semi-annual forum.', color: 'blue', icon: 'school' },
+                { id: 6, title: '教練培訓 / Coach Training', date: '2026-03-10', time: '10:00', location: '教室 4 / Classroom 4', desc: '雙語教練培訓。/ Bilingual coaching.', color: 'amber', icon: 'psychology' },
+            ]);
+        }
+
+        function getDateStr(offset) {
+            const d = new Date(); d.setDate(d.getDate() + offset);
+            return d.toISOString().slice(0, 10);
+        }
+
+        // ===== BOOKINGS =====
+        const STORAGE_KEY = 'sol_bookings';
+        function getBookings() { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+        function saveBookings(b) { localStorage.setItem(STORAGE_KEY, JSON.stringify(b)); }
+        if (getBookings().length === 0) {
+            saveBookings([
+                { room: 1, date: todayStr, start: 9, end: 12, purpose: '督導會議', actor: 'SW-A' },
+                { room: 1, date: todayStr, start: 14, end: 16, purpose: '個案研討', actor: 'Coach-A' },
+                { room: 3, date: todayStr, start: 14, end: 16, purpose: '個案研討 #1024', actor: 'SW-B' },
+                { room: 5, date: todayStr, start: 9, end: 12, purpose: '社區活動', actor: 'Admin' },
+            ]);
+        }
+
+        // ===== AUDIT =====
+        const AUDIT_KEY = 'sol_audit_logs';
+        function getAuditLogs() { return JSON.parse(localStorage.getItem(AUDIT_KEY) || '[]'); }
+        function saveAuditLogs(l) { localStorage.setItem(AUDIT_KEY, JSON.stringify(l)); }
+        function addAuditLog(actor, action, description) {
+            const logs = getAuditLogs();
+            logs.unshift({ timestamp: new Date().toISOString(), actor, action, description });
+            saveAuditLogs(logs);
+        }
+        if (getAuditLogs().length === 0) {
+            saveAuditLogs([
+                { timestamp: '2026-02-28T10:42:00', actor: 'SW-A', action: '更新個案', description: '更新 Case #1024 至 Stage 5' },
+                { timestamp: '2026-02-28T10:00:00', actor: 'SW-A', action: '新增場地', description: '預約 教室 1 09:00-12:00' },
+                { timestamp: '2026-02-28T09:15:00', actor: 'Coach-A', action: '新增場地', description: '預約 教室 1 14:00-16:00' },
+                { timestamp: '2026-02-27T16:30:00', actor: 'Admin', action: '封存個案', description: '封存 Case #998' },
+                { timestamp: '2026-02-27T14:30:00', actor: 'Coach-A', action: '修改事項', description: '更改 [家長座談] 地點至教室 2' },
+                { timestamp: '2026-02-27T11:00:00', actor: 'SW-B', action: '新增場地', description: '預約 教室 3 14:00-16:00' },
+                { timestamp: '2026-02-26T15:00:00', actor: 'Admin', action: '修改事項', description: '新增 [結案典禮] 事項' },
+                { timestamp: '2026-02-26T10:00:00', actor: 'SW-A', action: '更新個案', description: '更新 Case #1035 益蟲標記' },
+            ]);
+        }
+
+        // ===== TAB SWITCHING =====
+        function switchTab(tab) {
+            document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelector(`.page-tab[onclick*="${tab}"]`).classList.add('active');
+            document.getElementById('panel-' + tab).classList.add('active');
+            if (tab === 'audit') renderAuditLogs();
+            if (tab === 'venue') renderTimeline();
+            if (tab === 'events') { renderEventList(); renderCalendars(); renderYearGrid(); }
+        }
+
+        // ===== EVENTS RENDERING =====
+        const iconMap = { amber: 'groups', blue: 'assignment', pink: 'celebration', green: 'park' };
+
+        function renderEventList() {
+            const events = getEvents().sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+            const container = document.getElementById('eventList');
+            container.innerHTML = events.map(ev => {
+                const isToday = ev.date === todayStr;
+                const isPast = ev.date < todayStr;
+                const badge = isToday ? '<span class="event-badge today">Today / 今日</span>' :
+                    isPast ? '' : '<span class="event-badge upcoming">Upcoming / 即將</span>';
+                return `<div class="event-item-card">
+                <div class="event-item-icon ${ev.color}"><span class="material-icons-outlined">${ev.icon || iconMap[ev.color] || 'event'}</span></div>
+                <div style="flex:1;min-width:0">
+                    <div class="event-item-title">${ev.title}</div>
+                    <div class="event-item-meta"><span class="material-icons-outlined">schedule</span>${ev.time} — ${ev.location}</div>
+                    <div style="font-size:11px;color:var(--text-sub);margin-top:2px">${ev.desc}</div>
+                    ${badge}
+                </div>
+                <button class="event-delete-btn" onclick="deleteEvent(${ev.id})" title="刪除 / Delete">
+                    <span class="material-icons-outlined">close</span>
+                </button>
+            </div>`;
+            }).join('');
+        }
+
+        function deleteEvent(id) {
+            if (!confirm('確定刪除此事項？/ Delete this event?')) return;
+            const events = getEvents().filter(e => e.id !== id);
+            const deleted = getEvents().find(e => e.id === id);
+            saveEvents(events);
+            if (deleted) addAuditLog('Admin', '刪除事項', `刪除 [${deleted.title}]`);
+            renderEventList(); renderCalendars(); renderYearGrid();
+        }
+
+        // ===== CALENDAR =====
+        const MONTHS_ZH = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
+        const MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const DOWS = ['日', '一', '二', '三', '四', '五', '六'];
+
+        function getEventDates() {
+            const set = new Set();
+            getEvents().forEach(e => set.add(e.date));
+            return set;
+        }
+
+        function renderMonth(containerId, year, month) {
+            const eventDates = getEventDates();
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const prevDays = new Date(year, month, 0).getDate();
+
+            let html = `<div class="cal-header"><span class="cal-title">${year} ${MONTHS_ZH[month]} / ${MONTHS_EN[month]}</span></div>`;
+            html += '<div class="cal-grid">';
+            DOWS.forEach(d => html += `<div class="cal-dow">${d}</div>`);
+
+            // Previous month days
+            for (let i = firstDay - 1; i >= 0; i--) {
+                html += `<div class="cal-day other-month">${prevDays - i}</div>`;
+            }
+            // Current month days
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                const isToday = dateStr === todayStr;
+                const hasEvent = eventDates.has(dateStr);
+                const cls = `cal-day${isToday ? ' today' : ''}${hasEvent ? ' has-event' : ''}`;
+                html += `<div class="${cls}" onclick="calDayClick('${dateStr}')">${d}</div>`;
+            }
+            // Fill remaining
+            const totalCells = firstDay + daysInMonth;
+            const remaining = (7 - totalCells % 7) % 7;
+            for (let i = 1; i <= remaining; i++) {
+                html += `<div class="cal-day other-month">${i}</div>`;
+            }
+            html += '</div>';
+            document.getElementById(containerId).innerHTML = html;
+        }
+
+        function renderCalendars() {
+            const m1 = today.getMonth();
+            const y1 = today.getFullYear();
+            const m2 = m1 === 11 ? 0 : m1 + 1;
+            const y2 = m1 === 11 ? y1 + 1 : y1;
+            renderMonth('calMonth1', y1, m1);
+            renderMonth('calMonth2', y2, m2);
+        }
+
+        function calDayClick(dateStr) {
+            document.getElementById('evDate').value = dateStr;
+            openEventModal();
+        }
+
+        // ===== YEAR GRID =====
+        function renderYearGrid() {
+            document.getElementById('yearLabel').textContent = `${calYear} 年曆 / Year Calendar`;
+            const eventDates = getEventDates();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+
+            let html = '';
+            for (let m = 0; m < 12; m++) {
+                const isCurrent = calYear === currentYear && m === currentMonth;
+                // Count events in this month
+                const prefix = `${calYear}-${String(m + 1).padStart(2, '0')}`;
+                let count = 0;
+                eventDates.forEach(d => { if (d.startsWith(prefix)) count++; });
+
+                html += `<div class="year-month${isCurrent ? ' current' : ''}" onclick="calYear=${calYear};renderMonth('calMonth1',${calYear},${m});renderMonth('calMonth2',${calYear},${m === 11 ? 0 : m + 1})">`;
+                html += `<div class="year-month-name">${MONTHS_ZH[m]}</div>`;
+                if (count > 0) {
+                    html += `<div class="year-month-dots">${'<div class="year-month-dot"></div>'.repeat(Math.min(count, 5))}</div>`;
+                    html += `<div class="year-month-count">${count} 事項</div>`;
+                }
+                html += '</div>';
+            }
+            document.getElementById('yearGrid').innerHTML = html;
+        }
+
+        function changeYear(delta) {
+            calYear += delta;
+            renderYearGrid();
+        }
+
+        // ===== EVENT MODAL =====
+        function openEventModal() {
+            document.getElementById('eventModal').classList.add('active');
+            if (!document.getElementById('evDate').value) document.getElementById('evDate').value = todayStr;
+        }
+        function closeEventModal() { document.getElementById('eventModal').classList.remove('active'); }
+        document.getElementById('eventModal').addEventListener('click', function (e) { if (e.target === this) closeEventModal(); });
+
+        function confirmAddEvent() {
+            const title = document.getElementById('evTitle').value;
+            if (!title) { alert('請輸入標題 / Please enter a title'); return; }
+            const events = getEvents();
+            const newEvent = {
+                id: Date.now(),
+                title,
+                date: document.getElementById('evDate').value || todayStr,
+                time: document.getElementById('evTime').value || '10:00',
+                location: document.getElementById('evLocation').value,
+                desc: document.getElementById('evDesc').value || '',
+                color: document.getElementById('evColor').value,
+                icon: iconMap[document.getElementById('evColor').value] || 'event',
+            };
+            events.push(newEvent);
+            saveEvents(events);
+            addAuditLog('Admin', '新增事項', `新增 [${title}] (${newEvent.date})`);
+            closeEventModal();
+            document.getElementById('evTitle').value = '';
+            document.getElementById('evDesc').value = '';
+            renderEventList(); renderCalendars(); renderYearGrid();
+        }
+
+        // ===== VENUE TIMELINE =====
+        function selectClassroom(el, num) {
+            currentClassroom = num;
+            document.querySelectorAll('.classroom-tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            renderTimeline();
+        }
+        function changeDate(delta) { currentDate.setDate(currentDate.getDate() + delta); renderTimeline(); }
+        function formatDate(d) {
+            const days = ['日', '一', '二', '三', '四', '五', '六'];
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} (週${days[d.getDay()]})`;
+        }
+        function renderTimeline() {
+            document.getElementById('dateLabel').textContent = formatDate(currentDate);
+            const dateStr = currentDate.toISOString().slice(0, 10);
+            const bookings = getBookings().filter(b => b.room === currentClassroom && b.date === dateStr);
+            const hours = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
+            let bookedCount = 0;
+            const slots = hours.map(h => {
+                if (h === 12) return { type: 'lunch' };
+                const booking = bookings.find(b => h >= b.start && h < b.end);
+                if (booking) { bookedCount++; return { type: 'booked', label: booking.purpose, actor: booking.actor }; }
+                return { type: 'free' };
+            });
+            const status = bookedCount === 0 ? 'available' : bookedCount >= 8 ? 'full' : 'partial';
+            const statusLabel = bookedCount === 0 ? 'Available / 可用' : bookedCount >= 8 ? 'Full / 已滿' : 'Partial / 部分預約';
+            document.getElementById('timelineContainer').innerHTML = `
+            <div class="timeline-header">
+                <div class="timeline-room-name"><span class="material-icons-outlined">door_front</span>教室 ${currentClassroom} / Classroom ${currentClassroom}</div>
+                <span class="room-status-badge ${status}">${statusLabel}</span>
+            </div>
+            <div class="timeline-grid">
+                <div class="timeline-hours">${hours.map(h => `<div class="timeline-hour">${String(h).padStart(2, '0')}:00</div>`).join('')}</div>
+                <div class="timeline-bar">${slots.map((s, i) => {
+                if (s.type === 'lunch') return '<div class="timeline-slot lunch">🍽️</div>';
+                if (s.type === 'booked') return `<div class="timeline-slot booked" title="${s.label}"><div class="slot-info">${s.actor}<br>${hours[i]}:00</div></div>`;
+                return `<div class="timeline-slot free" onclick="quickBook(${hours[i]})">✓</div>`;
+            }).join('')}</div>
+            </div>
+            <div class="timeline-legend">
+                <div class="legend-item"><div class="legend-dot free"></div>可預約</div>
+                <div class="legend-item"><div class="legend-dot booked"></div>已預約</div>
+                <div class="legend-item"><div class="legend-dot lunch"></div>午休</div>
+            </div>`;
+        }
+        function quickBook(hour) {
+            document.getElementById('modalRoom').value = currentClassroom;
+            document.getElementById('modalDate').value = currentDate.toISOString().slice(0, 10);
+            document.getElementById('modalStart').value = hour;
+            document.getElementById('modalEnd').value = hour + 1;
+            openBookingModal();
+        }
+        function openBookingModal() { document.getElementById('bookingModal').classList.add('active'); document.getElementById('conflictWarning').classList.remove('show'); if (!document.getElementById('modalDate').value) document.getElementById('modalDate').value = todayStr; }
+        function closeBookingModal() { document.getElementById('bookingModal').classList.remove('active'); }
+        document.getElementById('bookingModal').addEventListener('click', function (e) { if (e.target === this) closeBookingModal(); });
+        function confirmBooking() {
+            const room = parseInt(document.getElementById('modalRoom').value);
+            const date = document.getElementById('modalDate').value;
+            const start = parseInt(document.getElementById('modalStart').value);
+            const end = parseInt(document.getElementById('modalEnd').value);
+            const purpose = document.getElementById('modalPurpose').value || '會議';
+            if (end <= start) { alert('結束時間必須在開始之後'); return; }
+            const bookings = getBookings();
+            const conflict = bookings.find(b => b.room === room && b.date === date && ((start >= b.start && start < b.end) || (end > b.start && end <= b.end) || (start <= b.start && end >= b.end)));
+            if (conflict) { document.getElementById('conflictWarning').classList.add('show'); return; }
+            const user = JSON.parse(localStorage.getItem('sol_user') || '{}');
+            bookings.push({ room, date, start, end, purpose, actor: user.username || 'SW-A' });
+            saveBookings(bookings);
+            addAuditLog(user.username || 'SW-A', '新增場地', `預約 教室 ${room} ${String(start).padStart(2, '0')}:00-${String(end).padStart(2, '0')}:00`);
+            closeBookingModal(); renderTimeline();
+        }
+
+        // ===== AUDIT =====
+        function renderAuditLogs() {
+            const logs = getAuditLogs();
+            const df = document.getElementById('auditDateFilter')?.value || '';
+            const af = document.getElementById('auditActorFilter')?.value || '';
+            const actf = document.getElementById('auditActionFilter')?.value || '';
+            const filtered = logs.filter(l => (!df || l.timestamp.startsWith(df)) && (!af || l.actor === af) && (!actf || l.action === actf));
+            const colors = { '新增場地': 'book', '修改事項': 'edit', '更新個案': 'add', '封存個案': 'delete', '新增事項': 'add', '刪除事項': 'delete' };
+            document.getElementById('auditTableBody').innerHTML = filtered.map(l => {
+                const t = new Date(l.timestamp);
+                const ts = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')} ${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
+                return `<tr><td class="audit-timestamp">${ts}</td><td class="audit-actor">${l.actor}</td><td><span class="audit-action ${colors[l.action] || 'add'}">${l.action}</span></td><td>${l.description}</td></tr>`;
+            }).join('');
+        }
+        function filterAuditLogs() { renderAuditLogs(); }
+
+        // ===== INIT =====
+        renderEventList(); renderCalendars(); renderYearGrid(); renderTimeline(); renderAuditLogs();
+        document.getElementById('modalDate').value = todayStr;
+        const hash = window.location.hash.replace('#', '');
+        if (['events', 'venue', 'audit'].includes(hash)) switchTab(hash);
+    </script>
+</body>
+
+</html>

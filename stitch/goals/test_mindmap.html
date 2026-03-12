@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>å¿ƒæ™º?–æ¸¬è©?/ Mind Map Test</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body { margin: 0; padding: 20px; font-family: sans-serif; }
+        #container { 
+            width: 100%; 
+            height: 600px; 
+            border: 2px solid #507D55;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+        .node rect { 
+            cursor: pointer; 
+            transition: all 0.2s;
+        }
+        .node:hover rect { 
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); 
+        }
+        .link { 
+            fill: none; 
+            stroke: #86efac; 
+            stroke-width: 2px; 
+        }
+        .add-btn { 
+            cursor: pointer; 
+            opacity: 0; 
+            transition: opacity 0.2s; 
+        }
+        .node:hover .add-btn { 
+            opacity: 1; 
+        }
+        .info {
+            padding: 10px;
+            background: #fff3cd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <h2>?§ª å¿ƒæ™º?–å??½æ¸¬è©¦é???/h2>
+        <p><b>?ä?èªªæ?ï¼?/b></p>
+        <ul>
+            <li>??ä¸­å??‰ä??‹ç??²ç?é»ã€Œç?è²¡è??ƒã€?/li>
+            <li>??æ»‘é??¸å?ç¯€é»ï?é»æ??³ä?è§?<b>+</b> ?‰é??°å?å­ç?é»?/li>
+            <li>?ï? ?™æ?ç¯€é»å¯ç·¨è¼¯ï¼ˆæ?å½ˆå‡º prompt è¼¸å…¥æ¡†ï?</li>
+            <li>?–±ï¸??–æ›³ç¯€é»å¯ç§»å?ä½ç½®</li>
+        </ul>
+    </div>
+    <div id="container"></div>
+
+    <script>
+        console.log('?? ?‹å??å??–å??ºå?...');
+        console.log('D3 version:', d3.version);
+
+        // ?¸æ?çµæ?
+        const data = {
+            id: "root",
+            name: "?†è²¡è¦å?\nFinancial Planning",
+            children: [
+                { id: "c1", name: "?¶å…¥ç®¡ç?\nIncome", children: [] },
+                { id: "c2", name: "?¯å‡º?§åˆ¶\nExpense", children: [] }
+            ]
+        };
+
+        // è¨­ç½®
+        const width = 800;
+        const height = 600;
+
+        const svg = d3.select("#container")
+            .append("svg")
+            .attr("width", "100%")
+            .attr("height", "100%")
+            .attr("viewBox", [0, 0, width, height]);
+
+        const g = svg.append("g");
+        const gLinks = g.append("g");
+        const gNodes = g.append("g");
+
+        // ?›å??‘æ¨¡??
+        const simulation = d3.forceSimulation()
+            .force("link", d3.forceLink().id(d => d.id).distance(150))
+            .force("charge", d3.forceManyBody().strength(-500))
+            .force("center", d3.forceCenter(width / 2, height / 2));
+
+        let nodeElements, linkElements;
+
+        function update() {
+            console.log('?? ?´æ–°è¦–å?...');
+            const root = d3.hierarchy(data);
+            const nodes = root.descendants();
+            const links = root.links();
+
+            console.log('ç¯€é»æ•¸??', nodes.length);
+            console.log('????¸é?:', links.length);
+
+            // ?´æ–°???
+            linkElements = gLinks.selectAll(".link")
+                .data(links, d => d.target.id);
+
+            linkElements.exit().remove();
+
+            const linkEnter = linkElements.enter()
+                .append("line")
+                .attr("class", "link");
+
+            linkElements = linkEnter.merge(linkElements);
+
+            // ?´æ–°ç¯€é»?
+            nodeElements = gNodes.selectAll(".node")
+                .data(nodes, d => d.id);
+
+            nodeElements.exit().remove();
+
+            const nodeEnter = nodeElements.enter()
+                .append("g")
+                .attr("class", "node")
+                .call(d3.drag()
+                    .on("start", function(event, d) {
+                        if (!event.active) simulation.alphaTarget(0.3).restart();
+                        d.fx = d.x;
+                        d.fy = d.y;
+                    })
+                    .on("drag", function(event, d) {
+                        d.fx = event.x;
+                        d.fy = event.y;
+                    })
+                    .on("end", function(event, d) {
+                        if (!event.active) simulation.alphaTarget(0);
+                        d.fx = null;
+                        d.fy = null;
+                    })
+                );
+
+            // ç¯€é»çŸ©å½?
+            nodeEnter.append("rect")
+                .attr("width", 120)
+                .attr("height", 50)
+                .attr("x", -60)
+                .attr("y", -25)
+                .attr("rx", 8)
+                .attr("fill", d => d.data.id === "root" ? "#507D55" : "#ffffff")
+                .attr("stroke", "#86efac")
+                .attr("stroke-width", 2)
+                .on("dblclick", function(event, d) {
+                    const newName = prompt("ç·¨è¼¯?ç¨± / Edit name:", d.data.name);
+                    if (newName) {
+                        d.data.name = newName;
+                        update();
+                    }
+                });
+
+            // ç¯€é»æ?å­?
+            nodeEnter.append("text")
+                .attr("text-anchor", "middle")
+                .attr("dy", 5)
+                .attr("fill", d => d.data.id === "root" ? "#ffffff" : "#345237")
+                .attr("font-size", "12px")
+                .attr("font-weight", "600")
+                .style("pointer-events", "none")
+                .selectAll("tspan")
+                .data(d => d.data.name.split('\n'))
+                .enter()
+                .append("tspan")
+                .attr("x", 0)
+                .attr("dy", (d, i) => i === 0 ? -5 : 15)
+                .text(d => d);
+
+            // ?°å??‰é?
+            const addBtn = nodeEnter.append("g")
+                .attr("class", "add-btn")
+                .attr("transform", "translate(50, 20)")
+                .on("click", function(event, d) {
+                    event.stopPropagation();
+                    const newId = "node_" + Date.now();
+                    const newNode = {
+                        id: newId,
+                        name: "?°ç?é»\nNew Node",
+                        children: []
+                    };
+                    if (!d.data.children) d.data.children = [];
+                    d.data.children.push(newNode);
+                    console.log('???°å?ç¯€é»?', newId);
+                    update();
+                });
+
+            addBtn.append("circle")
+                .attr("r", 8)
+                .attr("fill", "white")
+                .attr("stroke", "#4ade80")
+                .attr("stroke-width", 1.5);
+
+            addBtn.append("text")
+                .attr("text-anchor", "middle")
+                .attr("dy", 4)
+                .attr("fill", "#507D55")
+                .attr("font-size", "14px")
+                .attr("font-weight", "bold")
+                .style("pointer-events", "none")
+                .text("+");
+
+            nodeElements = nodeEnter.merge(nodeElements);
+
+            // ?´æ–°æ¨¡æ“¬
+            simulation.nodes(nodes);
+            simulation.force("link").links(links);
+            simulation.alpha(1).restart();
+
+            console.log('??è¦–å??´æ–°å®Œæ?');
+        }
+
+        // Tick äº‹ä»¶
+        simulation.on("tick", () => {
+            if (linkElements) {
+                linkElements
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+            }
+
+            if (nodeElements) {
+                nodeElements.attr("transform", d => `translate(${d.x},${d.y})`);
+            }
+        });
+
+        // ?å???
+        console.log('???‹å?æ¸²æ?...');
+        update();
+        console.log('??å¿ƒæ™º?–å?å§‹å?å®Œæ?ï¼?);
+    </script>
+</body>
+</html>
