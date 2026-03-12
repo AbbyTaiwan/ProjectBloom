@@ -1572,10 +1572,31 @@
             const conflict = bookings.find(b => b.room === room && b.date === date && ((start >= b.start && start < b.end) || (end > b.start && end <= b.end) || (start <= b.start && end >= b.end)));
             if (conflict) { document.getElementById('conflictWarning').classList.add('show'); return; }
             const user = JSON.parse(localStorage.getItem('sol_user') || '{}');
-            bookings.push({ room, date, start, end, purpose, actor: user.username || 'SW-A' });
+            const actor = user.username || 'SW-A';
+
+            bookings.push({ room, date, start, end, purpose, actor });
             saveBookings(bookings);
-            addAuditLog(user.username || 'SW-A', '新增場地', `預約 教室 ${room} ${String(start).padStart(2, '0')}:00-${String(end).padStart(2, '0')}:00`);
-            closeBookingModal(); renderTimeline();
+
+            // Sync to Events Board
+            const events = getEvents();
+            events.push({
+                id: Date.now(),
+                title: `[場地預約] ${purpose}`,
+                date: date,
+                time: `${String(start).padStart(2, '0')}:00`,
+                location: `教室 ${room} / Classroom ${room}`,
+                desc: `由 ${actor} 預約。Booking from ${start}:00 to ${end}:00.`,
+                color: 'blue',
+                icon: 'meeting_room'
+            });
+            saveEvents(events);
+
+            addAuditLog(actor, '新增場地', `預約 教室 ${room} ${String(start).padStart(2, '0')}:00-${String(end).padStart(2, '0')}:00`);
+            closeBookingModal();
+            renderTimeline();
+            renderEventList();
+            renderCalendars();
+            renderYearGrid();
         }
 
         // ===== AUDIT =====
