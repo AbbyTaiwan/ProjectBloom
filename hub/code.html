@@ -178,6 +178,57 @@
             font-size: 20px
         }
 
+        /* Dropdown wrapper */
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .nav-dropdown .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-hover);
+            min-width: 220px;
+            z-index: 200;
+            padding: 6px 0;
+            margin-top: 0;
+        }
+
+        .nav-dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 18px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-sub);
+            text-decoration: none;
+            transition: all 0.15s;
+            font-family: var(--font);
+        }
+
+        .dropdown-menu a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .dropdown-menu a .material-icons-outlined {
+            font-size: 18px;
+            color: var(--text-muted);
+        }
+
+        .dropdown-menu a:hover .material-icons-outlined {
+            color: var(--primary);
+        }
+
         /* ===== CONTENT ===== */
         .content {
             padding: 24px 32px 40px;
@@ -1132,9 +1183,23 @@
             </div>
         </div>
         <div class="nav-tabs">
-            <button class="nav-tab active" onclick="switchTab('mgmt')">
-                <span class="material-icons-outlined">dashboard</span>管理中樞 / Management Hub
-            </button>
+            <div class="nav-dropdown">
+                <button class="nav-tab active" onclick="switchTab('mgmt')">
+                    <span class="material-icons-outlined">dashboard</span>管理中樞 / Management Hub
+                    <span class="material-icons-outlined" style="font-size:16px;margin-left:2px;">expand_more</span>
+                </button>
+                <div class="dropdown-menu">
+                    <a href="events.html#events">
+                        <span class="material-icons-outlined">event_note</span>重要事項看板 / Events Board
+                    </a>
+                    <a href="events.html#venue">
+                        <span class="material-icons-outlined">meeting_room</span>場地預約 / Venue Booking
+                    </a>
+                    <a href="events.html#audit">
+                        <span class="material-icons-outlined">history</span>透明化日誌 / Audit Logs
+                    </a>
+                </div>
+            </div>
             <button class="nav-tab" onclick="switchTab('forest')">
                 <span class="material-icons-outlined">forest</span>個案森林 / Case Forest
             </button>
@@ -1144,7 +1209,7 @@
     <div class="content">
         <!-- ===== TAB 1: Management Hub ===== -->
         <div class="tab-panel active" id="panel-mgmt">
-            <!-- Events + Calendar Split -->
+            <!-- Events Board (left) + Venue Booking (right) -->
             <div class="mgmt-split">
                 <!-- Left: Events -->
                 <div>
@@ -1158,30 +1223,8 @@
                         <span class="material-icons-outlined" style="font-size:16px;">add_circle</span>新增事項 / Add Event
                     </button>
                 </div>
-                <!-- Right: Calendar -->
+                <!-- Right: Venue Booking -->
                 <div>
-                    <div class="sec-title"><span class="material-icons-outlined">calendar_month</span>行事曆 / Calendar
-                    </div>
-                    <div class="cal-dual">
-                        <div class="cal-box" id="calM1"></div>
-                        <div class="cal-box" id="calM2"></div>
-                    </div>
-                    <div class="cal-box" style="margin-top:0">
-                        <div class="yr-head">
-                            <button class="cal-nav" onclick="chgYr(-1)"><span
-                                    class="material-icons-outlined">chevron_left</span></button>
-                            <span class="cal-ttl" id="yrLbl"></span>
-                            <button class="cal-nav" onclick="chgYr(1)"><span
-                                    class="material-icons-outlined">chevron_right</span></button>
-                        </div>
-                        <div class="yr-grid" id="yrGrid"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Venue + Audit -->
-            <div class="bottom-split">
-                <div class="panel">
                     <div class="sec-title">
                         <span class="material-icons-outlined">meeting_room</span>場地預約 / Venue Booking
                         <a href="events.html#venue" class="sec-goto"><span class="material-icons-outlined"
@@ -1192,33 +1235,6 @@
                             style="text-align:center; padding:24px 10px; font-size:12px; color:var(--text-muted); font-style:italic;">
                             目前無場地預約紀錄 / No venue bookings
                         </div>
-                    </div>
-                </div>
-                <div class="panel">
-                    <div class="sec-title">
-                        <span class="material-icons-outlined">history</span>透明化日誌 / Audit Logs
-                        <a href="events.html#audit" class="sec-goto"><span class="material-icons-outlined"
-                                style="font-size:14px;">open_in_new</span></a>
-                    </div>
-                    <div class="aud-card">
-                        <table class="aud-tbl">
-                            <thead>
-                                <tr>
-                                    <th>時間</th>
-                                    <th>操作者</th>
-                                    <th>行動</th>
-                                    <th>描述</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="4"
-                                        style="text-align:center; padding:24px 10px; font-size:12px; color:var(--text-muted); font-style:italic;">
-                                        尚無任何活動日誌 / No audit logs available
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
@@ -1408,24 +1424,56 @@
 
     <footer class="page-footer">© 2026 生命種子計畫 Seed of Life Project. All rights reserved.</footer>
 
-    <script>
+    <script type="module">
+        import { db, collection, onSnapshot } from '../firebase-config.js';
+
+        window.switchTab = switchTab;
+        window.chgYr = chgYr;
+        window.handleLogout = handleLogout;
+
+        // ===== FIREBASE DATA SYNC =====
+        let sol_events = [];
+        let sol_bookings = [];
+        let sol_audit_logs = [];
+
+        function getEv() { return sol_events; }
+        function getBookings() { return sol_bookings; }
+        function getAuditLogs() { return sol_audit_logs; }
+
+        onSnapshot(collection(db, "events"), (snapshot) => {
+            sol_events = snapshot.docs.map(d => ({ fbId: d.id, ...d.data() }));
+            if (document.getElementById('panel-mgmt').classList.contains('active')) {
+                renderEvents();
+            }
+        });
+
+        onSnapshot(collection(db, "bookings"), (snapshot) => {
+            sol_bookings = snapshot.docs.map(d => ({ fbId: d.id, ...d.data() }));
+            if (document.getElementById('panel-mgmt').classList.contains('active')) {
+                renderVenues();
+            }
+        });
+
+        onSnapshot(collection(db, "audit_logs"), (snapshot) => {
+            sol_audit_logs = snapshot.docs.map(d => ({ fbId: d.id, ...d.data() }));
+            sol_audit_logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            // Audit logs are only displayed on events.html now
+        });
+
         // ===== TAB SWITCH =====
         function switchTab(tab) {
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-            document.querySelector(`.nav-tab[onclick*="${tab}"]`).classList.add('active');
-            document.getElementById('panel-' + tab).classList.add('active');
-            if (tab === 'mgmt') { renderEvents(); renderCals(); renderYr(); }
+            const nt = document.querySelector(`.nav-tab[onclick*="${tab}"]`);
+            if (nt) nt.classList.add('active');
+            const pt = document.getElementById('panel-' + tab);
+            if (pt) pt.classList.add('active');
+            if (tab === 'mgmt') { renderEvents(); renderVenues(); }
         }
 
         // ===== EVENTS =====
         const today = new Date(), todayStr = today.toISOString().slice(0, 10);
-        const EVK = 'sol_events';
-        function getEv() { return JSON.parse(localStorage.getItem(EVK) || '[]'); }
         function dateOff(n) { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); }
-        if (getEv().length === 0) {
-            localStorage.setItem(EVK, JSON.stringify([]));
-        }
 
         function renderEvents() {
             const evs = getEv().sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
@@ -1446,9 +1494,6 @@
         }
 
         // ===== VENUES & AUDIT =====
-        function getBookings() { return JSON.parse(localStorage.getItem('sol_bookings') || '[]'); }
-        function getAuditLogs() { return JSON.parse(localStorage.getItem('sol_audit_logs') || '[]'); }
-
         function renderVenues() {
             const bookings = getBookings().filter(b => b.date >= todayStr).sort((a, b) => a.date.localeCompare(b.date) || a.start - b.start).slice(0, 5);
             const container = document.querySelector('.ven-list');
@@ -1540,13 +1585,14 @@
 
         // ===== INIT =====
         function handleLogout() { localStorage.removeItem('sol_user'); window.location.href = '../index.html'; }
-        renderEvents(); renderCals(); renderYr(); renderVenues(); renderAudits();
 
         // Check URL hash on page load to switch to the correct tab
         window.addEventListener('load', function () {
             const hash = window.location.hash.slice(1); // Remove the '#'
             if (hash && (hash === 'mgmt' || hash === 'forest')) {
                 switchTab(hash);
+            } else {
+                switchTab('mgmt');
             }
         });
 
@@ -1663,7 +1709,12 @@
     </div>
 
     <!-- Upload Logic Script placed at the bottom so elements exist -->
-    <script>
+    <script type="module">
+        import { db, storage, collection, addDoc, ref, uploadBytesResumable, getDownloadURL } from '../firebase-config.js';
+
+        window.openUploadModal = openUploadModal;
+        window.closeUploadModal = closeUploadModal;
+
         function getUploadModal() { return document.getElementById('uploadModal'); }
 
         function openUploadModal() {
@@ -1692,7 +1743,7 @@
         });
 
         // Form submission
-        document.getElementById('uploadForm').addEventListener('submit', function (e) {
+        document.getElementById('uploadForm').addEventListener('submit', async function (e) {
             e.preventDefault();
 
             const btn = document.getElementById('uploadSubmitBtn');
@@ -1704,39 +1755,70 @@
             const title = document.getElementById('resTitle').value;
             const stage = document.getElementById('resStage').value;
             const desc = document.getElementById('resDesc').value;
-            // Get file name if available, else generic name
             const fileInput = document.getElementById('resFile');
-            const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : '附件.pdf';
+            const file = fileInput.files.length > 0 ? fileInput.files[0] : null;
 
-            // Create resource object
-            const newRes = {
-                id: 'res_' + Date.now().toString(36),
-                title: title,
-                stage: stage,
-                desc: desc || '尚無描述 / No description',
-                fileName: fileName,
-                uploadedBy: 'Coach / Social Worker', // Currently hardcoded
-                date: new Date().toISOString().slice(0, 10),
-                type: fileName.split('.').pop().toLowerCase()
-            };
+            let fileName = file ? file.name : '';
+            let ext = '';
 
-            // Save to localStorage
-            let resources = JSON.parse(localStorage.getItem('sol_resources') || '[]');
-            resources.push(newRes);
-            localStorage.setItem('sol_resources', JSON.stringify(resources));
+            if (fileName.includes('.')) {
+                ext = fileName.split('.').pop().toLowerCase();
+            } else {
+                ext = 'link';
+            }
 
-            // Simulate network delay
-            setTimeout(() => {
+            try {
+                let fileUrl = null;
+
+                // If a file is selected, upload it to Storage first
+                if (file) {
+                    btn.innerHTML = '<span class="material-icons-outlined" style="animation:spin 1s linear infinite">refresh</span> 上傳檔案中...';
+
+                    // Create a unique file path in Storage
+                    const uniqueFileName = `${Date.now()}_${fileName}`;
+                    const storageRef = ref(storage, `resources/${uniqueFileName}`);
+
+                    // Upload the file
+                    const uploadTask = await uploadBytesResumable(storageRef, file);
+
+                    // Get the downloadable URL
+                    fileUrl = await getDownloadURL(storageRef);
+                }
+
+                btn.innerHTML = '<span class="material-icons-outlined" style="animation:spin 1s linear infinite">refresh</span> 儲存資料中...';
+
+                // Create resource object
+                const newRes = {
+                    id: 'res_' + Date.now().toString(36),
+                    title: title || '未命名資源 / Untitled Resource',
+                    stage: stage || 'Goal 00: 未分類 / Uncategorized',
+                    desc: desc || '尚無描述 / No description',
+                    fileName: fileName || '外部連結 / External Link',
+                    uploadedBy: 'Coach / Social Worker',
+                    date: new Date().toISOString().slice(0, 10),
+                    type: ext || 'unknown',
+                    fileUrl: fileUrl // This will be null if no file was uploaded
+                };
+
+                console.log("Attempting to upload to Firestore:", newRes);
+
+                // Save metadata to Firestore
+                await addDoc(collection(db, "resources"), newRes);
+
                 btn.innerHTML = origText;
                 btn.disabled = false;
                 closeUploadModal();
 
-                // Show success toast
                 setTimeout(() => {
                     alert(`成功發布至: ${stage}！\nSuccessfully posted!`);
                 }, 100);
 
-            }, 800);
+            } catch (error) {
+                console.error("Upload error", error);
+                btn.innerHTML = origText;
+                btn.disabled = false;
+                alert("發布失敗 / Failed to post: " + error.message);
+            }
         });
     </script>
     <style>

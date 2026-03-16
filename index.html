@@ -238,8 +238,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            margin-top: 28px;
+            gap: 10px;
+            margin-top: 16px;
             box-shadow: 0 4px 16px rgba(74, 140, 92, 0.3);
         }
 
@@ -250,6 +250,20 @@
 
         .login-btn:active {
             transform: translateY(0);
+        }
+
+        .login-btn.google-btn {
+            background: white;
+            color: #3C4043;
+            border: 1px solid #DADCE0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-top: 8px;
+        }
+
+        .login-btn.google-btn:hover {
+            background: #F8F9FA;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: #D2E3FC;
         }
 
         .login-btn .material-icons-outlined {
@@ -367,21 +381,11 @@
                 <div class="logo-subtitle">Seed of Life — Professional Collaboration Platform</div>
             </div>
 
-            <form id="loginForm" onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label class="form-label">帳號 <span>/ Username</span></label>
-                    <input class="form-input" type="text" id="username" placeholder="請輸入帳號 / Enter username" required />
-                </div>
-                <div class="form-group">
-                    <label class="form-label">密碼 <span>/ Password</span></label>
-                    <input class="form-input" type="password" id="password" placeholder="請輸入密碼 / Enter password"
-                        required />
-                </div>
-                <button class="login-btn" type="submit">
-                    <span class="material-icons-outlined">login</span>
-                    登入 / Login
-                </button>
-            </form>
+            <button class="login-btn google-btn" id="googleLoginBtn">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"
+                    style="width: 20px; height: 20px;" />
+                使用 Google 帳號登入
+            </button>
 
         </div>
 
@@ -391,25 +395,36 @@
         </div>
     </div>
 
-    <script>
-        function selectRole(el, role) {
-            document.querySelectorAll('.role-pill').forEach(p => p.classList.remove('active'));
-            el.classList.add('active');
-        }
+    <script type="module">
+        import { auth, provider, signInWithPopup } from './firebase-config.js';
 
-        function handleLogin(e) {
-            e.preventDefault();
-            const btn = e.target.querySelector('.login-btn');
-            btn.innerHTML = '<span class="material-icons-outlined" style="animation:spin 1s linear infinite">refresh</span> 驗證中... / Verifying...';
+        document.getElementById('googleLoginBtn').addEventListener('click', async (e) => {
+            const btn = e.currentTarget;
+            btn.innerHTML = '<span class="material-icons-outlined" style="animation:spin 1s linear infinite">refresh</span> 登入中... / Logging in...';
             btn.disabled = true;
 
-            const username = document.getElementById('username').value;
-            localStorage.setItem('sol_user', JSON.stringify({ username, role: 'SW', loggedIn: true }));
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
 
-            setTimeout(() => {
-                window.location.href = 'hub/code.html';
-            }, 800);
-        }
+                // Keep the lightweight sol_user object in localStorage for synchronous script access
+                // while using real Firebase auth for the ultimate source of truth.
+                localStorage.setItem('sol_user', JSON.stringify({
+                    uid: user.uid,
+                    username: user.displayName || '社工',
+                    email: user.email,
+                    role: 'SW',
+                    loggedIn: true
+                }));
+
+                window.location.href = 'hub/code.html#forest';
+            } catch (error) {
+                console.error("Login failed:", error);
+                alert("登入失敗 / Login Failed: " + error.message);
+                btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width: 20px; height: 20px;" /> 使用 Google 帳號登入';
+                btn.disabled = false;
+            }
+        });
     </script>
     <style>
         @keyframes spin {

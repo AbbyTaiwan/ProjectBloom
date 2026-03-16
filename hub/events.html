@@ -1298,7 +1298,9 @@
 
     <footer class="page-footer">© 2026 生命種子計畫 Seed of Life Project. All rights reserved.</footer>
 
-    <script>
+    <script type="module">
+        import { db, collection, addDoc, onSnapshot, doc, deleteDoc } from '../firebase-config.js';
+
         // ===== STATE =====
         const today = new Date();
         const todayStr = today.toISOString().slice(0, 10);
@@ -1306,39 +1308,47 @@
         let currentDate = new Date();
         let calYear = today.getFullYear();
 
-        // ===== EVENTS DATA =====
-        const EVK = 'sol_events';
-        function getEvents() { return JSON.parse(localStorage.getItem(EVK) || '[]'); }
-        function saveEvents(e) { localStorage.setItem(EVK, JSON.stringify(e)); }
+        // ===== FIREBASE DATA SYNC =====
+        let sol_events = [];
+        let sol_bookings = [];
+        let sol_audit_logs = [];
 
-        if (getEvents().length === 0) {
-            saveEvents([]);
+        function getEvents() { return sol_events; }
+        function getBookings() { return sol_bookings; }
+        function getAuditLogs() { return sol_audit_logs; }
+
+        onSnapshot(collection(db, "events"), (snapshot) => {
+            sol_events = snapshot.docs.map(d => ({ fbId: d.id, ...d.data() }));
+            if (document.getElementById('panel-events').classList.contains('active')) {
+                renderEventList(); renderCalendars(); renderYearGrid();
+            }
+        });
+
+        onSnapshot(collection(db, "bookings"), (snapshot) => {
+            sol_bookings = snapshot.docs.map(d => ({ fbId: d.id, ...d.data() }));
+            if (document.getElementById('panel-venue').classList.contains('active')) {
+                renderTimeline();
+            }
+        });
+
+        onSnapshot(collection(db, "audit_logs"), (snapshot) => {
+            sol_audit_logs = snapshot.docs.map(d => ({ fbId: d.id, ...d.data() }));
+            sol_audit_logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            if (document.getElementById('panel-audit').classList.contains('active')) {
+                renderAuditLogs();
+            }
+        });
+
+        async function addAuditLog(actor, action, description) {
+            await addDoc(collection(db, "audit_logs"), {
+                timestamp: new Date().toISOString(),
+                actor, action, description
+            });
         }
 
         function getDateStr(offset) {
             const d = new Date(); d.setDate(d.getDate() + offset);
             return d.toISOString().slice(0, 10);
-        }
-
-        // ===== BOOKINGS =====
-        const STORAGE_KEY = 'sol_bookings';
-        function getBookings() { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
-        function saveBookings(b) { localStorage.setItem(STORAGE_KEY, JSON.stringify(b)); }
-        if (getBookings().length === 0) {
-            saveBookings([]);
-        }
-
-        // ===== AUDIT =====
-        const AUDIT_KEY = 'sol_audit_logs';
-        function getAuditLogs() { return JSON.parse(localStorage.getItem(AUDIT_KEY) || '[]'); }
-        function saveAuditLogs(l) { localStorage.setItem(AUDIT_KEY, JSON.stringify(l)); }
-        function addAuditLog(actor, action, description) {
-            const logs = getAuditLogs();
-            logs.unshift({ timestamp: new Date().toISOString(), actor, action, description });
-            saveAuditLogs(logs);
-        }
-        if (getAuditLogs().length === 0) {
-            saveAuditLogs([]);
         }
 
         // ===== TAB SWITCHING =====
@@ -1394,13 +1404,14 @@
             }).join('');
         }
 
-        function deleteEvent(id) {
+        async function deleteEvent(id) {
             if (!confirm('確定刪除此事項？/ Delete this event?')) return;
-            const events = getEvents().filter(e => e.id !== id);
             const deleted = getEvents().find(e => e.id === id);
-            saveEvents(events);
-            if (deleted) addAuditLog('Admin', '刪除事項', `刪除 [${deleted.title}]`);
-            renderEventList(); renderCalendars(); renderYearGrid();
+            if (deleted && deleted.fbId) {
+                await deleteDoc(doc(db, "events", deleted.fbId));
+                const user = JSON.parse(localStorage.getItem('sol_user') || '{}');
+                addAuditLog(user.username || 'Admin', '刪除事項', `刪除 [${deleted.title}]`);
+            }
         }
 
         // ===== CALENDAR =====
@@ -1499,10 +1510,9 @@
         function closeEventModal() { document.getElementById('eventModal').classList.remove('active'); }
         document.getElementById('eventModal').addEventListener('click', function (e) { if (e.target === this) closeEventModal(); });
 
-        function confirmAddEvent() {
+        async function confirmAddEvent() {
             const title = document.getElementById('evTitle').value;
             if (!title) { alert('請輸入標題 / Please enter a title'); return; }
-            const events = getEvents();
             const newEvent = {
                 id: Date.now(),
                 title,
@@ -1513,13 +1523,15 @@
                 color: document.getElementById('evColor').value,
                 icon: iconMap[document.getElementById('evColor').value] || 'event',
             };
-            events.push(newEvent);
-            saveEvents(events);
-            addAuditLog('Admin', '新增事項', `新增 [${title}] (${newEvent.date})`);
+            await addDoc(collection(db, "events"), newEvent);
+            const user = JSON.parse(localStorage.getItem('sol_user') || '{}');
+            addAuditLog(user.username || 'Admin', '新增事項', `新增 [${title}] (${newEvent.date})`);
+
             closeEventModal();
             document.getElementById('evTitle').value = '';
+            document.getElementById('evLocation').value = '';
             document.getElementById('evDesc').value = '';
-            renderEventList(); renderCalendars(); renderYearGrid();
+            // Realtime listener will handle UI re-render
         }
 
         // ===== VENUE TIMELINE =====
@@ -1577,7 +1589,7 @@
         function openBookingModal() { document.getElementById('bookingModal').classList.add('active'); document.getElementById('conflictWarning').classList.remove('show'); if (!document.getElementById('modalDate').value) document.getElementById('modalDate').value = todayStr; }
         function closeBookingModal() { document.getElementById('bookingModal').classList.remove('active'); }
         document.getElementById('bookingModal').addEventListener('click', function (e) { if (e.target === this) closeBookingModal(); });
-        function confirmBooking() {
+        async function confirmBooking() {
             const room = parseInt(document.getElementById('modalRoom').value);
             const date = document.getElementById('modalDate').value;
             const start = parseInt(document.getElementById('modalStart').value);
@@ -1590,15 +1602,10 @@
             const user = JSON.parse(localStorage.getItem('sol_user') || '{}');
             const actor = user.username || 'SW-A';
 
-            bookings.push({ room, date, start, end, purpose, actor });
-            saveBookings(bookings);
+            await addDoc(collection(db, "bookings"), { room, date, start, end, purpose, actor });
 
             addAuditLog(actor, '新增場地', `預約 教室 ${room} ${String(start).padStart(2, '0')}:00-${String(end).padStart(2, '0')}:00`);
             closeBookingModal();
-            renderTimeline();
-            renderEventList();
-            renderCalendars();
-            renderYearGrid();
         }
 
         // ===== AUDIT =====
@@ -1616,12 +1623,31 @@
             }).join('');
         }
         function filterAuditLogs() { renderAuditLogs(); }
+        // ===== EXPORTS FOR MODULE UI BINDINGS =====
+        window.switchTab = switchTab;
+        window.deleteEvent = deleteEvent;
+        window.confirmAddEvent = confirmAddEvent;
+        window.openEventModal = openEventModal;
+        window.closeEventModal = closeEventModal;
+        window.quickBook = quickBook;
+        window.selectClassroom = selectClassroom;
+        window.changeDate = changeDate;
+        window.openBookingModal = openBookingModal;
+        window.closeBookingModal = closeBookingModal;
+        window.confirmBooking = confirmBooking;
+        window.calDayClick = calDayClick;
+        window.changeYear = changeYear;
+        window.handleLogout = handleLogout;
+        window.filterAuditLogs = filterAuditLogs;
 
         // ===== INIT =====
-        renderEventList(); renderCalendars(); renderYearGrid(); renderTimeline(); renderAuditLogs();
         document.getElementById('modalDate').value = todayStr;
         const hash = window.location.hash.replace('#', '');
-        if (['events', 'venue', 'audit'].includes(hash)) switchTab(hash);
+        if (['events', 'venue', 'audit'].includes(hash)) {
+            switchTab(hash);
+        } else {
+            switchTab('events');
+        }
     </script>
 </body>
 
